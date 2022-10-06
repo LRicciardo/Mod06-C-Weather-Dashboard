@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link   
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+  <link 
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,400i,700&display=swap"
+    />
+  <link 
+    rel="stylesheet" 
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css"
+    />
+  <!-- <link rel="icon" type="x-icon" href="./assets/images/clockface.png"> -->
+  <link 
+    rel="stylesheet" 
+    href="./assets/css/style.css"
+    />
+  <title>5-Day Forecast</title>
+</head>
+
+<body class="flex-column min-100-vh">
+  <header class="hero">
+    <div id="banner">
+      <h1 class="app-title">
+        <i class="fa-sharp fa-solid fa-cloud-sun-rain"></i> 5-day Weather Forecast
+      </h1>
+      <p>Search for 5-day weather forecast for a city you know!
+      </p>
+    </div>
+  </header>
+
+
+  <!-- <main class="d-inline justify-space-between"> -->
+  <main class="row col-12">
+    <div id="searchContainer" class="col-3">
+      <div class="card">
+        <h3 class="card-header text-uppercase">Location Search</h3>
+        <form id="user-form" class="card-body">
+          <label class="form-label" for="username">enter city, state or zip code</label>
+          <input name="location" id="location" type="text" autofocus="true" class="form-input" />
+          <button type="submit" class="btn">Get Forecast</button>
+        </form>
+      </div>
+      <div>
+        <div class="col-3">
+        <h6>Past Searches</h3>
+        <br />
+        <div id="search-container" class="list-group">
+          <ul class="list-group" id="location-list"></ul>
+        </div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="forecastContainer" class="flex-row">
+      <div>
+        <div>
+          <h2 class="subtitle">Today is <span id="currentDate"></span></h2>
+          <h2 class="subtitle">Forecast for <span id="cityName"></span> Forecast</h2>
+          <p id="d1-sunrise"></p>
+          <p id="d1-sunset"></p>
+        </div>
+        <div id="forecastCards" class="row">
+          <div id="dayCard01" class="card">
+            <h3 class="card-header">Day 1</h3>
+            <p id="day01"></p>
+          </div>
+          <div id="dayCard02" class="card">
+            <h3 class="card-header">Day 2</h3>
+            <p id="day02"></p>
+          </div>
+          <div id="dayCard03" class="card">
+            <h3 class="card-header">Day 3</h3>
+            <p id="day03"></p>
+          </div>
+          <div id="dayCard04" class="card">
+            <h3 class="card-header">Day 4</h3>
+            <p id="day04"></p>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div> 
+  </main>
+
+  <!-- <script src="./assets/js/homepage.js"></script> -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.5/dayjs.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.5/plugin/advancedFormat.min.js"></script> -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.5/plugin/utc.min.js"></script> -->
+  <script src="./assets/js/script.js"></script>
+</body>
+
+</html>
