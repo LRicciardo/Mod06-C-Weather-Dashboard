@@ -1,8 +1,105 @@
 // var apiUrl = 'https://api.github.com/users/' + user + '/repos';
+var todayYYMMDD = dayjs().format("YYYYMMDD");
+
+var geoLocation = "address=Houston,+TX";
 var geoKey = "AIzaSyBzUZm38CUd6AtsYcewUaQwnKUnZPMI7mg";
+var geoApiUrl = "https://maps.googleapis.com/maps/api/geocode/json?" + geoLocation + "&key=" + geoKey;
+var geoReturnLongitude = -95.358421 ;
+var geoReturnLatitude = 29.749907;
+var geoData = [];
+var geoDataLayout = {
+    results: [
+        {
+            address_components: [
+                {
+                    long_name: "1600",
+                    short_name: "1600",
+                    types: [
+                        "street_number"
+                    ],
+                },
+                {
+                    long_name: "Amphitheatre Parkway",
+                    short_name: "Amphitheatre Pkwy",
+                    types: [
+                        "route"
+                    ],
+                },
+                {
+                    long_name: "Mountain View",
+                    short_name: "Mountain View",
+                    types: [
+                        "locality",
+                        "political"
+                    ],
+                },
+                {
+                    long_name: "Santa Clara County",
+                    short_name: "Santa Clara County",
+                    types: [
+                        "administrative_area_level_2",
+                        "political"
+                    ],
+                },
+                {
+                    long_name: "California",
+                    short_name: "CA",
+                    types: [
+                        "administrative_area_level_1",
+                        "political"
+                    ],
+                },
+                {
+                    long_name: "United States",
+                    short_name: "US",
+                    types: [
+                        "country",
+                        "political"
+                    ],
+                },
+                {
+                    long_name: "94043",
+                    short_name: "94043",
+                    types: [
+                        "postal_code"
+                    ],
+                }
+            ],
+            formatted_address: "1600 Amphitheatre Pkwy, Mountain View, CA 94043, USA",
+            geometry: {
+                location: {
+                    lat: 37.4224428,
+                    lng: -122.0842467
+                },
+                location_type: "ROOFTOP",
+                viewport: {
+                    northeast: {
+                        lat: 37.4239627802915,
+                        lng: -122.0829089197085
+                    },
+                    southwest: {
+                        lat: 37.4212648197085,
+                        lng: -122.0856068802915
+                    }
+                }
+            },
+            place_id: "ChIJeRpOeF67j4AR9ydy_PIzPuM",
+            plus_code: {
+                compound_code: "CWC8+X8 Mountain View, CA",
+                global_code: "849VCWC8+X8"
+            },
+            types: [
+                "street_address"
+            ]
+        }
+    ],
+    status: "OK"
+};
 
 var longitude = -95.358421 ;
 var latitude = 29.749907;
+
+
 var openKey = "2dbbe96da045c9cf9ec08f3837c40596";
 var openKeyName = "Mod06-key"
 // cnt= the number of timestamps
@@ -22,7 +119,7 @@ var locationLS = [{
     longitude: 0,
     latitude
     }];
-var dataLayout =[{
+var weatherDataLayout =[{
         cod: "200",
         message: 0,
         cnt: 40,
@@ -79,7 +176,26 @@ var dataLayout =[{
         }
 ];
 
- function displayForecast(forecastData){
+function    tempMinMax () {
+    // find the lowest and highest temps per day (upto 8-3hr items)
+};
+
+
+function storeGeo(geoData){
+    document.write('geo data received');
+    document.write('<br>');
+    console.log(">>geoData<<", geoData);
+    document.write(typeof geoData);
+    document.write('<br>');
+    // document.write('core object (housekeeping)', '<br>');
+    document.write("geo lat=>", geoData.results[0].geometry.location.lat, "< -geo lng=>", geoData.results[0].geometry.location.lng, "<br>");
+    geoReturnLongitude = geoData.results[0].geometry.location.lng ;
+    geoReturnLatitude = geoData.results[0].geometry.location.lat;
+    weatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + geoReturnLatitude + "&lon=" + geoReturnLongitude + "&appid=" + openKey + "&mode={json}&units=imperial&cnt=8";
+};
+
+
+function displayForecast(forecastData){
     document.write('weather data received');
     document.write('<br>');
     console.log(">>forecastData<<", forecastData);
@@ -90,31 +206,38 @@ var dataLayout =[{
     document.write("city header info > name=> ", forecastData.city.name, "--country=> ", forecastData.city.country,"<--lon=> ", forecastData.city.coord.lon, "<--lat=> ", forecastData.city.coord.lat,"<--sunriseUTC=> ", forecastData.city.sunrise, "<--sunsetUTC=> ", forecastData.city.sunset, "<br>");
     document.write('forecast data', '<br>');
     document.write("=====date txt ======= main temp == min == max ===  humidity ==== desc ==== main ====icon",  "<br>");
+    storeCityLS ();
     for(var i=0; i<forecastData.list.length;i++){
         iconCode = forecastData.list[i].weather[0].icon;
+        iconUrl = "http://openweathermap.org/img/w/" + iconCode + ".png";
+        tempMinMax();
         document.write("===>", forecastData.list[i].dt_txt, "<   >", forecastData.list[i].main.temp, "<   >", forecastData.list[i].main.temp_min, "<   >", forecastData.list[i].main.temp_max,  "< ===>", forecastData.list[i].main.humidity, "< == >", forecastData.list[i].weather[0].description, "     =>", forecastData.list[i].weather[0].main, "     =>", forecastData.list[i].weather[0].icon, "< == >"  , iconUrl, "<br>");
     };
- };
+};
+function storeCityLS () {
+    // search LS array for current city
+    //  if not found  
+    //   push to locale storage
+}
 
 
+callGeoAPI()
+.then(response => {
+  console.log('yay geo');
+})
+.catch(error => {
+    console.log('error geo!');
+    console.error(error);
+});
 
+async function callGeoAPI() {
+    const response = await fetch(geoApiUrl);
+    const geoData = await response.json();
+    console.log(">>geoData<<", geoData);
+    storeGeo(geoData);
+}
 
-// fetch(weatherApiUrl)
-//   .then(function (response) {
-//     if (response.ok) {
-//         response.json().then(function (data) {
-//         displayForecast(data);
-//       });
-//     } else {
-//     // redirect to error1.html
-//       alert('Error: ' + response.statusText);
-//     }
-//   })
-//   .catch(function (error) {
-//     alert('Unable to connect to OpenWeather');
-//   });
-
-callAPI()
+callWeatherAPI()
 .then(response => {
   console.log('yay');
 })
@@ -123,12 +246,12 @@ callAPI()
     console.error(error);
 });
 
-async function callAPI() {
+async function callWeatherAPI() {
     const response = await fetch(weatherApiUrl);
     const forecastData = await response.json();
     console.log(">>forecastData<<", forecastData);
     displayForecast(forecastData);
-}
+};
 
   $("#currentDate").html("Today is " + dayjs().format("dddd, MM/DD/YYYY"));
   var utcTime = dayjs('1664885779').format("HH:mm")
