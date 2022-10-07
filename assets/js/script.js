@@ -1,5 +1,28 @@
 // var apiUrl = 'https://api.github.com/users/' + user + '/repos';
-var todayYYMMDD = dayjs().format("YYYYMMDD");
+var forecast = [{
+        yymmdd: null,
+        min: 0,
+        max: 0},
+        {
+        yymmdd: null,
+        min: 0,
+        max: 0},
+        {
+        yymmdd: null,
+        min: 0,
+        max: 0},
+        {
+        yymmdd: null,
+        min: 0,
+        max: 0},
+        {
+        yymmdd: null,
+        min: 0,
+        max: 0},
+        {
+        yymmdd: null,
+        min: 0,
+        max: 0}];
 
 var geoLocation = "address=Houston,+TX";
 var geoKey = "AIzaSyBzUZm38CUd6AtsYcewUaQwnKUnZPMI7mg";
@@ -102,9 +125,10 @@ var latitude = 29.749907;
 
 var openKey = "2dbbe96da045c9cf9ec08f3837c40596";
 var openKeyName = "Mod06-key"
+var openRecCnt = 40;
 // cnt= the number of timestamps
 // units = units of measurements returned (standard-is Kelvin)
-var weatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longitude + "&appid=" + openKey + "&mode={json}&units=imperial&cnt=8";
+// var weatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longitude + "&appid=" + openKey + "&mode={json}&units=imperial&cnt=" + openRecCnt;
 http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}
 // assumption: requested imperial as units if measure 
 // assumption: requested 40 count = 5 days 
@@ -176,52 +200,92 @@ var weatherDataLayout =[{
         }
 ];
 
-function    tempMinMax () {
+function    tempMinMax (date, min, max) {
+    // console.log(" >>>>> inside tempMinMax ", date, min, max)
+    if (forecast[dayIdx].yymmdd == date) {
+        if (forecast[dayIdx].min > min) {forecast[dayIdx].min = min};
+        if (forecast[dayIdx].max < max) {forecast[dayIdx].max = max};
+    } else {
+        dayIdx++;
+        forecast[dayIdx].yymmdd = date; 
+        forecast[dayIdx].min = min; 
+        forecast[dayIdx].max = max
+    };
+
     // find the lowest and highest temps per day (upto 8-3hr items)
 };
 
 
+
 function storeGeo(geoData){
-    document.write('geo data received');
-    document.write('<br>');
-    console.log(">>geoData<<", geoData);
-    document.write(typeof geoData);
-    document.write('<br>');
-    // document.write('core object (housekeeping)', '<br>');
-    document.write("geo lat=>", geoData.results[0].geometry.location.lat, "< -geo lng=>", geoData.results[0].geometry.location.lng, "<br>");
+    console.log(" >>>>> inside storeGeo ", geoData)
+    console.log("geo lat=>", geoData.results[0].geometry.location.lat, "< -geo lng=>", geoData.results[0].geometry.location.lng, "<br>");
     geoReturnLongitude = geoData.results[0].geometry.location.lng ;
     geoReturnLatitude = geoData.results[0].geometry.location.lat;
-    weatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + geoReturnLatitude + "&lon=" + geoReturnLongitude + "&appid=" + openKey + "&mode={json}&units=imperial&cnt=8";
+    weatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + geoReturnLatitude + "&lon=" + geoReturnLongitude + "&appid=" + openKey + "&mode={json}&units=imperial&cnt=40";
+    console.log(weatherApiUrl)
+    //  >>>>>>>>>>>>>>>>> Open Weather API Call 
+    getWeatherAPIdata()
+        .then(response => {
+        console.log('yay');
+        })
+        .catch(error => {
+            console.log('error!');
+            console.error(error);
+        });
 };
 
 
 function displayForecast(forecastData){
-    document.write('weather data received');
-    document.write('<br>');
-    console.log(">>forecastData<<", forecastData);
-    document.write(typeof forecastData);
-    document.write('<br>');
-    document.write('core object (housekeeping)', '<br>');
-    document.write("cod=>", forecastData.cod, '--MSG=>', forecastData.message,"--cnt=>", forecastData.cnt, '<br>');
-    document.write("city header info > name=> ", forecastData.city.name, "--country=> ", forecastData.city.country,"<--lon=> ", forecastData.city.coord.lon, "<--lat=> ", forecastData.city.coord.lat,"<--sunriseUTC=> ", forecastData.city.sunrise, "<--sunsetUTC=> ", forecastData.city.sunset, "<br>");
-    document.write('forecast data', '<br>');
-    document.write("=====date txt ======= main temp == min == max ===  humidity ==== desc ==== main ====icon",  "<br>");
+    console.log(" >>>>> inside displayForcast ", forecastData);
+    // let entries = Object.entries(forecastData);
+    // console.log("entries>", entries);
+    // console.log("core    cod=>", forecastData.cod, "--MSG=>", forecastData.message,"--cnt=>", forecastData.cnt, "<br>");
+    // console.log("city header info > name=>", forecastData.city.name, "--country=>", forecastData.city.country,"<--lon=>", forecastData.city.coord.lon, "<--lat=>", forecastData.city.coord.lat,"<--sunriseUTC=>", forecastData.city.sunrise, "<--sunsetUTC=>", forecastData.city.sunset, "<br>");
+    // console.log('forecast data', '<br>');
+    // console.log("=====date txt ======= main temp == min == max ===  humidity ==== desc ==== main ====icon",  "<br>");
     storeCityLS ();
+
     for(var i=0; i<forecastData.list.length;i++){
         iconCode = forecastData.list[i].weather[0].icon;
-        iconUrl = "http://openweathermap.org/img/w/" + iconCode + ".png";
-        tempMinMax();
-        document.write("===>", forecastData.list[i].dt_txt, "<   >", forecastData.list[i].main.temp, "<   >", forecastData.list[i].main.temp_min, "<   >", forecastData.list[i].main.temp_max,  "< ===>", forecastData.list[i].main.humidity, "< == >", forecastData.list[i].weather[0].description, "     =>", forecastData.list[i].weather[0].main, "     =>", forecastData.list[i].weather[0].icon, "< == >"  , iconUrl, "<br>");
+        iconUrl = "http://openweathermap.org/img/w/" + iconCode + ".png";forecastYYMMDD = dayjs(forecastData.list[i].dt_txt).format("YYYYMMDD");
+        // console.log("forecastYYMMDD", forecastYYMMDD)
+        if (i === 0) {
+            forecast[0].yymmdd = forecastYYMMDD; 
+            forecast[0].min = forecastData.list[i].main.temp_min; 
+            forecast[0].max = forecastData.list[i].main.temp_max;
+            dayIdx = 0;   
+        } else {
+            tempMinMax(forecastYYMMDD, forecastData.list[i].main.temp_min, forecastData.list[i].main.temp_max);
+
+        };
     };
-};
+        // console.log("===>", forecastData.list[i].dt_txt, "<   >", forecastData.list[i].main.temp, "<   >", forecastData.list[i].main.temp_min, "<   >", forecastData.list[i].main.temp_max,  "< ===>", forecastData.list[i].main.humidity, "< == >", forecastData.list[i].weather[0].description, "     =>", forecastData.list[i].weather[0].main, "     =>", forecastData.list[i].weather[0].icon, "< == >"  , iconUrl, "<br>");
+
+      console.log("forecast=>", forecast)
+    };
 function storeCityLS () {
     // search LS array for current city
     //  if not found  
     //   push to locale storage
+    
 }
+async function getWeatherAPIdata() {
+    const response = await fetch(weatherApiUrl);
+    const forecastData = await response.json();
+    // console.log(">>forecastData<<", forecastData);
+    displayForecast(forecastData);
+};
 
+async function getGeoAPIdata() {
+    const response = await fetch(geoApiUrl);
+    const geoData = await response.json();
+    // console.log(">>geoData<<", geoData);
+    storeGeo(geoData);
+};
 
-callGeoAPI()
+//  >>>>>>>>>>>>>>>>> Google geo API Call 
+getGeoAPIdata()
 .then(response => {
   console.log('yay geo');
 })
@@ -230,28 +294,7 @@ callGeoAPI()
     console.error(error);
 });
 
-async function callGeoAPI() {
-    const response = await fetch(geoApiUrl);
-    const geoData = await response.json();
-    console.log(">>geoData<<", geoData);
-    storeGeo(geoData);
-}
 
-callWeatherAPI()
-.then(response => {
-  console.log('yay');
-})
-.catch(error => {
-    console.log('error!');
-    console.error(error);
-});
-
-async function callWeatherAPI() {
-    const response = await fetch(weatherApiUrl);
-    const forecastData = await response.json();
-    console.log(">>forecastData<<", forecastData);
-    displayForecast(forecastData);
-};
 
   $("#currentDate").html("Today is " + dayjs().format("dddd, MM/DD/YYYY"));
   var utcTime = dayjs('1664885779').format("HH:mm")
