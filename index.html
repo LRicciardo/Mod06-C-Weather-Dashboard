@@ -24,71 +24,81 @@
     />
   <title>5-Day Forecast</title>
 </head>
-
-<body class="flex-column min-100-vh">
-  <header class="hero">
-    <div id="banner">
-      <p class="app-title">
-        <i class="fa-sharp fa-solid fa-cloud-sun-rain"></i> 5-day Weather Forecast
-      </p>
-      <p>Search for 5-day weather forecast for a city you know!
-      </p>
-    </div>
+<body>
+  <header id="banner">
+    <h1 id="pageTitle">5-day Weather Forecast</h1>
   </header>
-
-
-  <!-- <main class="d-inline justify-space-between"> -->
-  <main class="row col-12">
-    <div id="searchContainer" class="col-3">
-      <div class="card">
-        <h3 class="card-header text-uppercase">Location Search</h3>
-        <form id="user-form" class="card-body">
-          <label class="form-label" for="username">enter city, state or zip code</label>
-          <input name="location" id="location" type="text" autofocus="true" class="form-input" />
-          <button type="submit" class="btn">Get Forecast</button>
-        </form>
+  
+  
+  <div class="row border-left">
+    <div id="searchBox" class="col-3 mt-5  border-left border-warning">
+      <form class="border border-dark">
+        <p>
+          <label for="location" class="justify-content-center">Location:</label>
+          <input class="text-input w-100" id="location" type="text" placeholder="Enter city and state or zipcode or city and country" />
+        </p>
+        <p >
+          <button id="submitBtn" class="w-100">Submit</button>
+        </p>
+      </form>
+      <div id="historyBox">
+        <ul id="historyList">
+          <!-- li of past searches go here -->
+        </ul>
       </div>
-      <div>
-        <div class="col-3">
-        <h6>Past Searches</h3>
-        <br />
-        <div id="search-container" class="list-group">
-          <ul class="list-group" id="location-list"></ul>
+    </div>
+
+
+    <div id="weatherBox" class="col-9">
+      <div id="currWeather" class="row">
+        <div id="currIcon" class="m-5"></div>
+        <div id="currConditions" class="col">
+        <H4>Current Weather conditions for 
+        <span id="currentDay"></span></H4>
+        <H4>Current Weather conditions for 
+        <span id="currentDay"></span></H4>
+        <span id="currentTemp"></span>
         </div>
+      </div>
+      <div id="forecastBox" class="row d-flex justify-content-around">
+        <div id="day01Card" class="p-1 border rounded bg-light">
+          <h5 id="d01CrdHdg">Day 01 Card</h5>
+          <p id="d01Min">Min</p>
+          <p id="d01Max">Max</p>
+          <p id="d01Hum">Humidity</p>
+          <p id="d01Wind">Wind</p>
+        </div>
+        <div id="day02Card" class="p-1 border rounded bg-light">
+          <h5 id="d02CrdHdg">day02Card</h5>
+          <p id="d02Min">Min</p>
+          <p id="d02Max">Max</p>
+          <p id="d02Hum">Humidity</p>
+          <p id="d02Wind">Wind</p> 
+        </div>
+        <div id="day03Card" class="p-1 border rounded bg-light">
+          <h5 id="d03CrdHdg">day03Card</h5>
+          <p id="d03Min">Min</p>
+          <p id="d03Max">Max</p>
+          <p id="d03Hum">Humidity</p>
+          <p id="d03Wind">Wind</p> 
+        </div>
+        <div id="day04Card" class="p-1 border rounded bg-light">
+          <h5 id="d04CrdHdg">day04Card</h5>
+          <p id="d04Min">Min</p>
+          <p id="d04Max">Max</p>
+          <p id="d04Hum">Humidity</p>
+          <p id="d04Wind">Wind</p> 
+        </div>
+        <div id="day05Card" class="p-1 border rounded bg-light">          
+          <h5 id="d05CrdHdg">day05Card</h5>
+          <p id="d05Min">Min</p>
+          <p id="d05Max">Max</p>
+          <p id="d05Hum">Humidity</p>
+          <p id="d05Wind">Wind</p> 
         </div>
       </div>
     </div>
-    
-    <div id="forecastContainer" class="flex-row">
-      <div>
-        <div>
-          <h2 class="subtitle">Today is <span id="currentDate"></span></h2>
-          <h2 class="subtitle">Forecast for <span id="cityName"></span> Forecast</h2>
-          <p id="d1-sunrise"></p>
-          <p id="d1-sunset"></p>
-        </div>
-        <div id="forecastCards" class="row">
-          <div id="dayCard01" class="card">
-            <h3 class="card-header">Day 1</h3>
-            <p id="day01"></p>
-          </div>
-          <div id="dayCard02" class="card">
-            <h3 class="card-header">Day 2</h3>
-            <p id="day02"></p>
-          </div>
-          <div id="dayCard03" class="card">
-            <h3 class="card-header">Day 3</h3>
-            <p id="day03"></p>
-          </div>
-          <div id="dayCard04" class="card">
-            <h3 class="card-header">Day 4</h3>
-            <p id="day04"></p>
-          </div>
-          </div>
-        </div>
-      </div>
-    </div> 
-  </main>
+  </div>
 
   <!-- <script src="./assets/js/homepage.js"></script> -->
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>

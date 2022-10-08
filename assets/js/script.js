@@ -1,28 +1,56 @@
 // var apiUrl = 'https://api.github.com/users/' + user + '/repos';
-var forecast = [{
+var currWeather = [
+        {
         yymmdd: null,
-        min: 0,
-        max: 0},
+        temp: 0,
+        windSpeed: 0,
+        humidity: 0,
+       icon: null }];
+var forecast = [
         {
         yymmdd: null,
         min: 0,
-        max: 0},
+        max: 0,
+        windSpeed: 0,
+        humidity: 0,
+        icon: null },
         {
         yymmdd: null,
         min: 0,
-        max: 0},
+        max: 0,
+        windSpeed: 0,
+        humidity: 0,
+        icon: null },
         {
         yymmdd: null,
         min: 0,
-        max: 0},
+        max: 0,
+        windSpeed: 0,
+        humidity: 0,
+        icon: null },
         {
         yymmdd: null,
         min: 0,
-        max: 0},
+        max: 0,
+        windSpeed: 0,
+        humidity: 0,
+        icon: null },
         {
         yymmdd: null,
         min: 0,
-        max: 0}];
+        max: 0,
+        windSpeed: 0,
+        humidity: 0,
+        icon: null },
+        {
+        yymmdd: null,
+        min: 0,
+        max: 0,
+        windSpeed: 0,
+        humidity: 0,
+        icon: null }
+];
+var forecastTime = dayjs('1664885779').format("HH:mm");
 
 var geoLocation = "address=Houston,+TX";
 var geoKey = "AIzaSyBzUZm38CUd6AtsYcewUaQwnKUnZPMI7mg";
@@ -137,12 +165,18 @@ http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country
 var forecastData =[];
 var iconCode = "01d";
 var iconUrl = "http://openweathermap.org/img/w/" + iconCode + ".png";
-var locationLS = [{
+var forecastLS = [{
     location: "",
     country: "",
     longitude: 0,
-    latitude
+    latitude: 0
     }];
+var storeData = [{
+    location: "",
+    country: "",
+    longitude: 0,
+    latitude: 0 }
+]
 var weatherDataLayout =[{
         cod: "200",
         message: 0,
@@ -200,89 +234,123 @@ var weatherDataLayout =[{
         }
 ];
 
-function    tempMinMax (date, min, max) {
-    // console.log(" >>>>> inside tempMinMax ", date, min, max)
+// calculate the min and max temps, max windspeed
+function    calcMinMax (date, min, max, humidity, wind) {
+    console.log(" >>>>> inside calcMinMax ", dayIdx, date, min, max)
     if (forecast[dayIdx].yymmdd == date) {
         if (forecast[dayIdx].min > min) {forecast[dayIdx].min = min};
         if (forecast[dayIdx].max < max) {forecast[dayIdx].max = max};
+        if (forecast[dayIdx].wind < wind) {forecast[dayIdx].wind = wind};
     } else {
         dayIdx++;
-        forecast[dayIdx].yymmdd = date; 
+        console.log ("add 1 to dayIdx")
+        if (dayIdx > 5) {return};
+        forecast[dayIdx].yymmdd = date;
         forecast[dayIdx].min = min; 
-        forecast[dayIdx].max = max
+        forecast[dayIdx].max = max;
+        forecast[dayIdx].humidity = humidity;
+        forecast[dayIdx].windSpeed = wind;
     };
 
     // find the lowest and highest temps per day (upto 8-3hr items)
 };
 
-
-
-function storeGeo(geoData){
-    console.log(" >>>>> inside storeGeo ", geoData)
-    console.log("geo lat=>", geoData.results[0].geometry.location.lat, "< -geo lng=>", geoData.results[0].geometry.location.lng, "<br>");
-    geoReturnLongitude = geoData.results[0].geometry.location.lng ;
-    geoReturnLatitude = geoData.results[0].geometry.location.lat;
-    weatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + geoReturnLatitude + "&lon=" + geoReturnLongitude + "&appid=" + openKey + "&mode={json}&units=imperial&cnt=40";
-    console.log(weatherApiUrl)
-    //  >>>>>>>>>>>>>>>>> Open Weather API Call 
-    getWeatherAPIdata()
-        .then(response => {
-        console.log('yay');
-        })
-        .catch(error => {
-            console.log('error!');
-            console.error(error);
-        });
-};
-
-
-function displayForecast(forecastData){
-    console.log(" >>>>> inside displayForcast ", forecastData);
-    // let entries = Object.entries(forecastData);
-    // console.log("entries>", entries);
-    // console.log("core    cod=>", forecastData.cod, "--MSG=>", forecastData.message,"--cnt=>", forecastData.cnt, "<br>");
-    // console.log("city header info > name=>", forecastData.city.name, "--country=>", forecastData.city.country,"<--lon=>", forecastData.city.coord.lon, "<--lat=>", forecastData.city.coord.lat,"<--sunriseUTC=>", forecastData.city.sunrise, "<--sunsetUTC=>", forecastData.city.sunset, "<br>");
-    // console.log('forecast data', '<br>');
-    // console.log("=====date txt ======= main temp == min == max ===  humidity ==== desc ==== main ====icon",  "<br>");
-    storeCityLS ();
+function gatherForecast(forecastData){
+    console.log(" >>>>> inside displayForecast ", forecastData);
+    storeData.location = forecastData.city.name;
+    storeData.country =  forecastData.city.country;
+    storeData.longitude = forecastData.city.coord.lon;
+    storeData.latitude = forecastData.city.coord.lat;
 
     for(var i=0; i<forecastData.list.length;i++){
-        iconCode = forecastData.list[i].weather[0].icon;
-        iconUrl = "http://openweathermap.org/img/w/" + iconCode + ".png";forecastYYMMDD = dayjs(forecastData.list[i].dt_txt).format("YYYYMMDD");
-        // console.log("forecastYYMMDD", forecastYYMMDD)
+        console.log("inside for loop >>> i=>", i);
+        forecastYYMMDD = dayjs(forecastData.list[i].dt_txt).format("YYYYMMDD");
+        forecastTime = dayjs(forecastData.list[i].dt_txt).format("HH:mm");
+        console.log("forecast date=>", forecastYYMMDD, "< time=>", forecastTime);
         if (i === 0) {
+            // current information is on first record
+            currWeather.yymmdd = forecastYYMMDD; 
+            currWeather.temp = forecastData.list[i].main.temp; 
+            currWeather.humidity = forecastData.list[i].main.humidity;
+            currWeather.windSpeed = forecastData.list[i].wind.speed;
+            currWeather.icon = forecastData.list[i].weather[0].icon;
+            // initialize forecast weather table
             forecast[0].yymmdd = forecastYYMMDD; 
             forecast[0].min = forecastData.list[i].main.temp_min; 
             forecast[0].max = forecastData.list[i].main.temp_max;
+            forecast[0].humidity = forecastData.list[i].main.humidity;
+            forecast[0].windSpeed = forecastData.list[i].wind.speed;
+            forecast[0].icon = forecastData.list[i].weather[0].icon;
             dayIdx = 0;   
+            console.log ("init forecast");
         } else {
-            tempMinMax(forecastYYMMDD, forecastData.list[i].main.temp_min, forecastData.list[i].main.temp_max);
-
+            // console.log("i>", i);
+            
+            calcMinMax(forecastYYMMDD, forecastData.list[i].main.temp_min, forecastData.list[i].main.temp_max, forecastData.list[i].main.humidity, forecastData.list[i].wind.speed);
+            if (dayIdx > 5) {
+                i = forecastData.list.length
+                console.log("exiting for loop");
+            };
         };
     };
-        // console.log("===>", forecastData.list[i].dt_txt, "<   >", forecastData.list[i].main.temp, "<   >", forecastData.list[i].main.temp_min, "<   >", forecastData.list[i].main.temp_max,  "< ===>", forecastData.list[i].main.humidity, "< == >", forecastData.list[i].weather[0].description, "     =>", forecastData.list[i].weather[0].main, "     =>", forecastData.list[i].weather[0].icon, "< == >"  , iconUrl, "<br>");
+      console.log("forecast=>", forecast);
+      console.log("storeData", storeData)
+    //   iconCode = forecastData.list[i].weather[0].icon;
+      iconUrl = "http://openweathermap.org/img/w/" + iconCode + ".png";
+    // storeCityLS ();
+};
 
-      console.log("forecast=>", forecast)
+// function getLocalStorage (location, country, longitude, latitude) {
+function getLocalStorage () {
+    console.log(" >>> inside getLocalStorage")
+    forecastLS = JSON.parse(localStorage.getItem("forecast")) || [];
+    if (forecastLS === null) {
+        // init storage
+        noStorage = true;
+        forecastLS = [];    
+        console.log(" no forecast Data in Local Storage");
+    } else {
+        // display prev forecast info (location, country, longitude, latitude) 
+        console.log("forecastLS", forecastLS);
     };
-function storeCityLS () {
-    // search LS array for current city
-    //  if not found  
-    //   push to locale storage
-    
+}; 
+
+function displayWeather(){
+    console.log(" >>> inside displayWeather");
+    $("#currentDate").html(" " + dayjs().format("dddd, MM/DD/YYYY"));
+
 }
+
 async function getWeatherAPIdata() {
     const response = await fetch(weatherApiUrl);
     const forecastData = await response.json();
     // console.log(">>forecastData<<", forecastData);
-    displayForecast(forecastData);
+    gatherForecast(forecastData);
 };
 
 async function getGeoAPIdata() {
     const response = await fetch(geoApiUrl);
     const geoData = await response.json();
     // console.log(">>geoData<<", geoData);
-    storeGeo(geoData);
+    // useGeotoGetWeather(geoData);
+    // console.log(" >>>>> inside storeGeo ", geoData)
+    // console.log("geo lat=>", geoData.results[0].geometry.location.lat, "< -geo lng=>", geoData.results[0].geometry.location.lng, "<br>");
+    geoReturnLongitude = geoData.results[0].geometry.location.lng;
+    geoReturnLatitude = geoData.results[0].geometry.location.lat;
+    weatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + geoReturnLatitude + "&lon=" + geoReturnLongitude + "&appid=" + openKey + "&mode={json}&units=imperial&cnt=40";
+    // console.log(weatherApiUrl);
+
+    //  >>>>>>>>>>>>>>>>> Open Weather API Call 
+    getWeatherAPIdata()
+    .then(response => {
+        console.log('yay');
+    })
+    .catch(error => {
+        console.log('error!');
+        console.error(error);
+    });
 };
+
 
 //  >>>>>>>>>>>>>>>>> Google geo API Call 
 getGeoAPIdata()
@@ -293,9 +361,116 @@ getGeoAPIdata()
     console.log('error geo!');
     console.error(error);
 });
+function initDocument() {
+    
+  $("#currentDate").html(" " + dayjs().format("dddd, MM/DD/YYYY"));
+  daySwitch = true;
+    if (dayjs().format("HH") > "17") {
+        daySwitch = false;
+    };
+
+    getLocalStorage();
+};
+    // let entries = Object.entries(forecastData);
+    // console.log("entries>", entries);
+    // console.log("core    cod=>", forecastData.cod, "--MSG=>", forecastData.message,"--cnt=>", forecastData.cnt, "<br>");
+    // console.log("city header info > name=>", forecastData.city.name, "--country=>", forecastData.city.country,"<--lon=>", forecastData.city.coord.lon, "<--lat=>", forecastData.city.coord.lat,"<--sunriseUTC=>", forecastData.city.sunrise, "<--sunsetUTC=>", forecastData.city.sunset, "<br>");
+    // console.log('forecast data', '<br>');
+    // console.log("=====date txt ======= main temp == min == max ===  humidity ==== desc ==== main ====icon",  "<br>");
+          // console.log("===>", forecastData.list[i].dt_txt, "<   >", forecastData.list[i].main.temp, "<   >", forecastData.list[i].main.temp_min, "<   >", forecastData.list[i].main.temp_max,  "< ===>", forecastData.list[i].main.humidity, "< == >", forecastData.list[i].weather[0].description, "     =>", forecastData.list[i].weather[0].main, "     =>", forecastData.list[i].weather[0].icon, "< == >"  , iconUrl, "<br>");
+//  ********Begin ******************  moved into function getGeoAPIdata
+// function useGeotoGetWeather(geoData){
+//     console.log(" >>>>> inside storeGeo ", geoData)
+//     console.log("geo lat=>", geoData.results[0].geometry.location.lat, "< -geo lng=>", geoData.results[0].geometry.location.lng, "<br>");
+//     geoReturnLongitude = geoData.results[0].geometry.location.lng ;
+//     geoReturnLatitude = geoData.results[0].geometry.location.lat;
+//     weatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + geoReturnLatitude + "&lon=" + geoReturnLongitude + "&appid=" + openKey + "&mode={json}&units=imperial&cnt=40";
+//     console.log(weatherApiUrl)
+//     //  >>>>>>>>>>>>>>>>> Open Weather API Call 
+//     getWeatherAPIdata()
+//     .then(response => {
+//         console.log('yay');
+//     })
+//     .catch(error => {
+//         console.log('error!');
+//         console.error(error);
+//     });
+// };
+//  ********end ******************  moved into function getGeoAPIdata
+
+// this is setup when document is finished loading
+$(document).ready(function() {
+    // console.log("document ready  >>>>>>>>>>>>>>>>>>>>>>");
+    
+    // initialize Document
+    initDocument();
+
+    $("#currentDay").html(" " + dayjs().format("dddd, MM/DD/YYYY"));
+
+// when the document is ready init the screen and wait for UI
+    $("#planner").on("click", function (event) {
+        console.log(" >>>>>>>>>document is ready>>>>>>>>>>>>>");
 
 
+        if (event.target !== event.currentTarget) {
+        //   console.log ("event target localName=>", event.target.localName);
+        //   console.log ("event target id=>", event.target.id);
+        //   console.log ("event=>", event);
+        //   if (event.target.localName !== "button") {
+            // console.log(event.target.localName, " not = button");
+        //   };
+        //   if (event.target.localName == "button") {
+        //     switch (event.target.id) {
+        //     case "btn07":
+        //         scheduleLS[0] = $("#appt07").val();
+        //         break;
+        //     case "btn08":
+        //         scheduleLS[1] = $("#appt08").val();
+        //         break;
+        //     case "btn09":
+        //         scheduleLS[2] = $("#appt09").val();
+        //         break;
+        //     case "btn10":
+        //         scheduleLS[3] = $("#appt10").val();
+        //         break;
+        //     case "btn11":
+        //         scheduleLS[4] = $("#appt11").val();
+        //         break;
+        //     case "btn12":
+        //         scheduleLS[5] = $("#appt12").val();
+        //         break;
+        //     case "btn13":
+        //         scheduleLS[6] = $("#appt13").val();
+        //         break;
+        //     case "btn14":
+        //         scheduleLS[7] = $("#appt14").val();
+        //         break;
+        //     case "btn15":
+        //         scheduleLS[8] = $("#appt15").val();
+        //         break;
+        //     case "btn16":
+        //         scheduleLS[9] = $("#appt16").val();
+        //         break;
+        //     case "btn17":
+        //         scheduleLS[10] = $("#appt17").val();
+        //         break;
+        //     case "btn18":
+        //         scheduleLS[11] = $("#appt18").val();
+        //         break;
+        //     case "btn19":
+        //         scheduleLS[12] = $("#appt19").val();
+        //         break;
+        //     default:
+        //         console.log("no button should get here");
+        //         console.log(event);
+        //         break;
+        //   };
+        //   };
 
-  $("#currentDate").html("Today is " + dayjs().format("dddd, MM/DD/YYYY"));
-  var utcTime = dayjs('1664885779').format("HH:mm")
-  console.log(utcTime)
+            localStorage.setItem("schedule", JSON.stringify(scheduleLS));
+            // console.log("save to localStorage=>", scheduleLS)
+        };
+    // stop bubbling
+    // event.stopPropagation();
+    });
+});
