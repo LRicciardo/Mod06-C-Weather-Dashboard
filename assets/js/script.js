@@ -223,8 +223,8 @@ var weatherDataLayout =[{
 ];
 // forecast Data created from weather API
 var weatherData =[];
-var iconCode = "01d";
-var iconUrl = "http://openweathermap.org/img/wn/" + iconCode + ".png";
+// var iconCode = "01d";
+// var iconUrl = "http://openweathermap.org/img/wn/" + iconCode + ".png";
 
 
 // Local Storage variables
@@ -250,12 +250,12 @@ var currWeather = {
        icon: null };
 
 // find the min and max temps, max windspeed
-function    findMinMax (date, min, max, humidity, wind) {
+function    findMinMax (date, min, max, humidity, windSpeed, icon) {
     // console.log(" >>>>> inside findMinMax ", dayIdx, date, min, max)
     if (forecast[dayIdx].yymmdd == date) {
         if (forecast[dayIdx].min > min) {forecast[dayIdx].min = min};
         if (forecast[dayIdx].max < max) {forecast[dayIdx].max = max};
-        if (forecast[dayIdx].wind < wind) {forecast[dayIdx].wind = wind};
+        if (forecast[dayIdx].windSpeed < windSpeed) {forecast[dayIdx].windSpeed = windSpeed};
     } else {
         dayIdx++;
         // console.log ("add 1 to dayIdx")
@@ -264,7 +264,8 @@ function    findMinMax (date, min, max, humidity, wind) {
         forecast[dayIdx].min = min; 
         forecast[dayIdx].max = max;
         forecast[dayIdx].humidity = humidity;
-        forecast[dayIdx].windSpeed = wind;
+        forecast[dayIdx].windSpeed = windSpeed;
+        forecast[dayIdx].icon = icon;
     };
 };
 
@@ -280,8 +281,8 @@ function initDocument() {
         };
     
         getLocalStorage();
-        $("#weatherBox").show();
-        // $("#weatherBox").hide();
+        // $("#weatherBox").show();
+        $("#weatherBox").hide();
     };
 
 function gatherForecast(weatherData){
@@ -315,7 +316,7 @@ function gatherForecast(weatherData){
             dayIdx = 0;   
             console.log ("init forecast");
         } else {          
-            findMinMax(forecastYYMMDD, weatherData.list[i].main.temp_min, weatherData.list[i].main.temp_max, weatherData.list[i].main.humidity, weatherData.list[i].wind.speed);
+            findMinMax(forecastYYMMDD, weatherData.list[i].main.temp_min, weatherData.list[i].main.temp_max, weatherData.list[i].main.humidity, weatherData.list[i].wind.speed, weatherData.list[i].weather[0].icon);
             if (dayIdx > 5) {
                 i = weatherData.list.length;
             };
@@ -327,9 +328,6 @@ function gatherForecast(weatherData){
 // function getLocalStorage (location, country, longitude, latitude) {
 function getLocalStorage () {
     console.log(" >>> inside getLocalStorage");
-    console.log("typeof historyLS, historyLS", typeof historyLS, historyLS);
-
-    console.log("storeData", storeData);
     historyLS = JSON.parse(localStorage.getItem("history")) || [];
     if (historyLS === null || historyLS.length === 0 ) {
         // init storage
@@ -339,9 +337,8 @@ function getLocalStorage () {
         return;
     };
 
-    // display prev forecast info (location, country, longitude, latitude) 
     console.log("historyLS", historyLS);
-    renderLS();
+    renderLS(historyLS);
    
 }; 
 
@@ -373,25 +370,23 @@ function saveLocalStorage() {
     // if not found push object on array
     historyLS.push(storeData);
     localStorage.setItem("history", JSON.stringify(historyLS));
-   
+    renderLS(historyLS);
 }; 
 
 
 // The following function renders items in a todo list as <li> elements
-function renderLS() {
+function renderLS(historyLS) {
     console.log(" >>> inside renderLS");
     // Clear todoList element and update todoCountSpan
     $("#historyList").empty();
   
     // Render a new li for each todo
     historyLS.forEach(function(item,index){ 
-        // console.log("index>item.location=>", index, item.location);
+
         var btnNbr = index + 1;
         var liEl = $("<li><button id=\"btn" + btnNbr + "\" type=\"button\" class=\"btn btn-secondary btn-lg btn-block\"></button></li>");      
-        // console.log("liEl=>", liEl);
         $("#historyList").append(liEl);
         var btnId = "#btn" + btnNbr;
-        // console.log("btnId=>", btnId);
         $(btnId).attr("data-index", index);
         $(btnId).text(item.location);
       
@@ -404,21 +399,41 @@ function displayWeather(){
     console.log("storeDate=>", storeData);
     console.log("forecast=>", forecast);
     console.log("currWeather=>", currWeather);
-    iconCode = currWeather.icon
-    iconUrl = "http://openweathermap.org/img/w/" + iconCode + ".png";
-    cssUrl = "url(" + iconUrl + ")";
+
+    iconUrl = "url(http://openweathermap.org/img/w/%icon%.png)";
+    cssUrl = iconUrl.replace("%icon%", currWeather.icon);
     console.log("css URL=>", cssUrl);
-    $("#currlocation").text(storeData.location);
-    $("#currDay").text(currWeather.day);
-    $("#currTemp").text(currWeather.temp);
-    $("#currWind").text(currWeather.temp);
-    $("#currHumidity").text(currWeather.temp);
-    // $("#currIcon").html("<img src=" + iconURL + ">");
-    // $("#currIcon").attr("src", iconUrl);
-    // $('#wicon').attr('src', iconurl);
     $( "#currIcon" ).css( {"background-image" : cssUrl } );
-    $("#currlocation").val(storeData.location);
-    $("#currentDay").val(" " + dayjs().format("ddd, MM/DD"));
+    $("#currlocation").text(storeData.location);
+    $("#currDay").text(" " + dayjs().format("ddd, MM/DD"));
+    $("#currTemp").text(currWeather.temp);
+    $("#currWind").text(currWeather.windSpeed);
+    $("#currHumidity").text(currWeather.humidity);
+
+    var cardIdx = 1;
+    for(var i=0; i < forecast.length; i++) {
+
+        // if (i === 0 && forecast[5].yymmdd !== "") {
+        //     console.log(i , forecast[5].yymmdd);
+        //     i++;
+        // };
+            
+        console.log(i , forecast[i].yymmdd, forecast[5].yymmdd, forecast.length);
+        // prompt("i++ why?");
+        cssUrl = iconUrl.replace("%icon%", forecast[i].icon);
+        console.log("css URL=>", cssUrl);
+        $("#day0" + cardIdx + "Card").css( {"background-image" : cssUrl } );
+        var day = dayjs(forecast[i].yymmdd).format("ddd, MM/DD");
+        $("#d0" + cardIdx + "CrdHdg").text(day);
+        $("#d0" + cardIdx + "Min").text(forecast[i].min);
+        $("#d0" + cardIdx + "Max").text(forecast[i].max);
+        $("#d0" + cardIdx + "Wind").text(forecast[i].windSpeed);
+        $("#d0" + cardIdx + "Hum").text(forecast[i].humidity);   
+        cardIdx++;       
+    };
+
+
+    $("#weatherBox").show();
 
 };
 
@@ -432,7 +447,7 @@ weatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + latitud
     gatherForecast(weatherData);
     displayWeather();
     saveLocalStorage();
-    renderLS();
+    
 };
 
 async function getGeoAPIdata(geoApiUrl) {

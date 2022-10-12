@@ -45,17 +45,25 @@
     height: 200px;
     width: 150px;
     background-image: url("http://openweathermap.org/img/w/01d.png");
-    background-size: cover;
+    background-size: contain;
     background-position: center;
 
+}
+
+#forecastBox {
+    color: black;
+    font-weight: 600;
+    text-emphasis: var(--dark);
+    text-shadow: black;
 }
 
 #day01Card {
     height: 200px;
     width: 150px;
     background-image: url("http://openweathermap.org/img/w/01d.png");
-    background-size: cover;
+    background-size: contain;
     background-position: center;
+    background-color: #74b9ff;
 
 }
 
@@ -63,8 +71,9 @@
     height: 200px;
     width: 150px;
     background-image: url("http://openweathermap.org/img/w/01d.png");
-    background-size: cover;
+    background-size: contain;
     background-position: center;
+    background-color: #74b9ff;
 
 }
 
@@ -72,8 +81,9 @@
     height: 200px;
     width: 150px;
     background-image: url("http://openweathermap.org/img/w/01d.png");
-    background-size: cover;
+    background-size: contain;
     background-position: center;
+    background-color: #74b9ff;
 
 }
 
@@ -81,18 +91,18 @@
     height: 200px;
     width: 150px;
     background-image: url("http://openweathermap.org/img/w/01d.png");
-    background-size: cover;
+    background-size: contain;
     background-position: center;
-
+    background-color: #74b9ff;
 }
 
 #day05Card {
     height: 200px;
     width: 150px;
     background-image: url("http://openweathermap.org/img/w/01d.png");
-    background-size: cover;
+    background-size: contain;
     background-position: center;
-
+    background-color: #74b9ff;
 }
 
 
