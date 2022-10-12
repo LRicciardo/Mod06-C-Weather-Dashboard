@@ -26,7 +26,12 @@
 </head>
 <body>
   <header id="banner">
-    <h1 id="pageTitle">5-day Weather Forecast</h1>
+    <div class="row justify-content-around">
+      <h1 id="pageTitle">5-day Weather Forecast</h1>
+      <H4>Today is  
+        <span id="currentDate"></span></H4>
+    </div>
+    
   </header>
   
   
@@ -43,6 +48,11 @@
       </form>
       <div id="historyBox">
         <ul id="historyList">
+          <li>
+            <button id="btn01" type="button" class="btn btn-secondary btn-lg btn-block">
+              Honolulu, HI
+            </button>
+          </li>
           <!-- li of past searches go here -->
         </ul>
       </div>
@@ -53,11 +63,11 @@
       <div id="currWeather" class="row">
         <div id="currIcon" class="m-5"></div>
         <div id="currConditions" class="col">
-        <H4>Current Weather conditions for 
-        <span id="currentDay"></span></H4>
-        <H4>Current Weather conditions for 
-        <span id="currentDay"></span></H4>
-        <span id="currentTemp"></span>
+        <H4>Current Weather conditions in <span id="currlocation"></span></H4>
+        <H4>for <span id="currDay"></span></H4>
+        <H5> Temperture: <span id="currTemp"></span>°</H5>
+        <H5> Wind Speed: up to <span id="currWind"> mi/hr</span></H5>
+        <h5> Humidity: <span id="currHumidity">%</span></h5>
         </div>
       </div>
       <div id="forecastBox" class="row d-flex justify-content-around">

@@ -1,11 +1,5 @@
 // var apiUrl = 'https://api.github.com/users/' + user + '/repos';
-var currWeather = [
-        {
-        yymmdd: null,
-        temp: 0,
-        windSpeed: 0,
-        humidity: 0,
-       icon: null }];
+
 var forecast = [
         {
         yymmdd: null,
@@ -51,13 +45,12 @@ var forecast = [
         icon: null }
 ];
 var forecastTime = dayjs('1664885779').format("HH:mm");
-
-var geoLocation = "address=Houston,+TX";
+// Geo Location API queries, selectors, API key and URL
+// var geoLocation = "Houston,+TX";
 var geoKey = "AIzaSyBzUZm38CUd6AtsYcewUaQwnKUnZPMI7mg";
-var geoApiUrl = "https://maps.googleapis.com/maps/api/geocode/json?" + geoLocation + "&key=" + geoKey;
-var geoReturnLongitude = -95.358421 ;
-var geoReturnLatitude = 29.749907;
-var geoData = [];
+// var geoApiUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + geoLocation + "&key=" + geoKey;
+
+//  informational data layout fron Geo location API
 var geoDataLayout = {
     results: [
         {
@@ -146,11 +139,19 @@ var geoDataLayout = {
     ],
     status: "OK"
 };
+// location Data created from geo location API
+var geoData = [];
+// holding variables ?
+var geoReturnLongitude = -95.358421 ;
+var geoReturnLatitude = 29.749907;
 
+
+// dummy longitude and latitude for testing weather API
 var longitude = -95.358421 ;
 var latitude = 29.749907;
 
 
+// weather API queries, selectors and API key
 var openKey = "2dbbe96da045c9cf9ec08f3837c40596";
 var openKeyName = "Mod06-key"
 var openRecCnt = 40;
@@ -162,21 +163,8 @@ http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country
 // assumption: requested 40 count = 5 days 
 // data layout is by location
 //  location contains an array of 3-hour spans of data and then the location information
-var forecastData =[];
-var iconCode = "01d";
-var iconUrl = "http://openweathermap.org/img/w/" + iconCode + ".png";
-var forecastLS = [{
-    location: "",
-    country: "",
-    longitude: 0,
-    latitude: 0
-    }];
-var storeData = [{
-    location: "",
-    country: "",
-    longitude: 0,
-    latitude: 0 }
-]
+
+//  informational data layout fron weather API
 var weatherDataLayout =[{
         cod: "200",
         message: 0,
@@ -233,17 +221,44 @@ var weatherDataLayout =[{
           }
         }
 ];
+// forecast Data created from weather API
+var weatherData =[];
+var iconCode = "01d";
+var iconUrl = "http://openweathermap.org/img/wn/" + iconCode + ".png";
 
-// calculate the min and max temps, max windspeed
-function    calcMinMax (date, min, max, humidity, wind) {
-    console.log(" >>>>> inside calcMinMax ", dayIdx, date, min, max)
+
+// Local Storage variables
+var locationFromLS = false;  // set flag to true if location found in LS
+var noLS = true;            // set flag to false if data in LS
+
+var historyLS = [{
+    location: "",
+    longitude: 0,
+    latitude: 0
+    }];
+
+var storeData = {
+    location: "",
+    longitude: 0,
+    latitude: 0 };
+
+var currWeather = {
+        day: null,
+        temp: 0,
+        windSpeed: 0,
+        humidity: 0,
+       icon: null };
+
+// find the min and max temps, max windspeed
+function    findMinMax (date, min, max, humidity, wind) {
+    // console.log(" >>>>> inside findMinMax ", dayIdx, date, min, max)
     if (forecast[dayIdx].yymmdd == date) {
         if (forecast[dayIdx].min > min) {forecast[dayIdx].min = min};
         if (forecast[dayIdx].max < max) {forecast[dayIdx].max = max};
         if (forecast[dayIdx].wind < wind) {forecast[dayIdx].wind = wind};
     } else {
         dayIdx++;
-        console.log ("add 1 to dayIdx")
+        // console.log ("add 1 to dayIdx")
         if (dayIdx > 5) {return};
         forecast[dayIdx].yymmdd = date;
         forecast[dayIdx].min = min; 
@@ -251,99 +266,191 @@ function    calcMinMax (date, min, max, humidity, wind) {
         forecast[dayIdx].humidity = humidity;
         forecast[dayIdx].windSpeed = wind;
     };
-
-    // find the lowest and highest temps per day (upto 8-3hr items)
 };
 
-function gatherForecast(forecastData){
-    console.log(" >>>>> inside displayForecast ", forecastData);
-    storeData.location = forecastData.city.name;
-    storeData.country =  forecastData.city.country;
-    storeData.longitude = forecastData.city.coord.lon;
-    storeData.latitude = forecastData.city.coord.lat;
+//  initialize switches, flags and variables
+//  load history onto screen
+function initDocument() {
+    console.log(" >>>>>>  inside initDocument  >>>>>>>>>>>>>>>");
+        
+      $("#currentDate").html(" " + dayjs().format("dddd, MM/DD/YYYY"));
+      daySwitch = true;
+        if (dayjs().format("HH") > "17") {
+            daySwitch = false;
+        };
+    
+        getLocalStorage();
+        $("#weatherBox").show();
+        // $("#weatherBox").hide();
+    };
 
-    for(var i=0; i<forecastData.list.length;i++){
-        console.log("inside for loop >>> i=>", i);
-        forecastYYMMDD = dayjs(forecastData.list[i].dt_txt).format("YYYYMMDD");
-        forecastTime = dayjs(forecastData.list[i].dt_txt).format("HH:mm");
-        console.log("forecast date=>", forecastYYMMDD, "< time=>", forecastTime);
+function gatherForecast(weatherData){
+    console.log(" >>>>> inside gatherForecast ", weatherData);
+    console.log("storeData=>", storeData)
+    // if (locationFromLS) {
+        
+    // } else {
+        
+    // }
+   
+    for(var i=0; i<weatherData.list.length;i++){
+        // console.log("inside for loop >>> i=>", i);
+        forecastYYMMDD = dayjs(weatherData.list[i].dt_txt).format("YYYYMMDD");
+        forecastTime = dayjs(weatherData.list[i].dt_txt).format("HH:mm");
+        // console.log("forecast date=>", forecastYYMMDD, "< time=>", forecastTime);
         if (i === 0) {
             // current information is on first record
-            currWeather.yymmdd = forecastYYMMDD; 
-            currWeather.temp = forecastData.list[i].main.temp; 
-            currWeather.humidity = forecastData.list[i].main.humidity;
-            currWeather.windSpeed = forecastData.list[i].wind.speed;
-            currWeather.icon = forecastData.list[i].weather[0].icon;
+            currWeather.yymmdd = dayjs(weatherData.list[i].dt_txt).format("ddd, MM/DD"); 
+            currWeather.temp = weatherData.list[i].main.temp; 
+            currWeather.humidity = weatherData.list[i].main.humidity;
+            currWeather.windSpeed = weatherData.list[i].wind.speed;
+            currWeather.icon = weatherData.list[i].weather[0].icon;
             // initialize forecast weather table
             forecast[0].yymmdd = forecastYYMMDD; 
-            forecast[0].min = forecastData.list[i].main.temp_min; 
-            forecast[0].max = forecastData.list[i].main.temp_max;
-            forecast[0].humidity = forecastData.list[i].main.humidity;
-            forecast[0].windSpeed = forecastData.list[i].wind.speed;
-            forecast[0].icon = forecastData.list[i].weather[0].icon;
+            forecast[0].min = weatherData.list[i].main.temp_min; 
+            forecast[0].max = weatherData.list[i].main.temp_max;
+            forecast[0].humidity = weatherData.list[i].main.humidity;
+            forecast[0].windSpeed = weatherData.list[i].wind.speed;
+            forecast[0].icon = weatherData.list[i].weather[0].icon;
             dayIdx = 0;   
             console.log ("init forecast");
-        } else {
-            // console.log("i>", i);
-            
-            calcMinMax(forecastYYMMDD, forecastData.list[i].main.temp_min, forecastData.list[i].main.temp_max, forecastData.list[i].main.humidity, forecastData.list[i].wind.speed);
+        } else {          
+            findMinMax(forecastYYMMDD, weatherData.list[i].main.temp_min, weatherData.list[i].main.temp_max, weatherData.list[i].main.humidity, weatherData.list[i].wind.speed);
             if (dayIdx > 5) {
-                i = forecastData.list.length
-                console.log("exiting for loop");
+                i = weatherData.list.length;
             };
         };
     };
-      console.log("forecast=>", forecast);
-      console.log("storeData", storeData)
-    //   iconCode = forecastData.list[i].weather[0].icon;
-      iconUrl = "http://openweathermap.org/img/w/" + iconCode + ".png";
-    // storeCityLS ();
+
 };
 
 // function getLocalStorage (location, country, longitude, latitude) {
 function getLocalStorage () {
-    console.log(" >>> inside getLocalStorage")
-    forecastLS = JSON.parse(localStorage.getItem("forecast")) || [];
-    if (forecastLS === null) {
+    console.log(" >>> inside getLocalStorage");
+    console.log("typeof historyLS, historyLS", typeof historyLS, historyLS);
+
+    console.log("storeData", storeData);
+    historyLS = JSON.parse(localStorage.getItem("history")) || [];
+    if (historyLS === null || historyLS.length === 0 ) {
         // init storage
-        noStorage = true;
-        forecastLS = [];    
+        noLS = true;
+        historyLS = [];    
         console.log(" no forecast Data in Local Storage");
-    } else {
-        // display prev forecast info (location, country, longitude, latitude) 
-        console.log("forecastLS", forecastLS);
+        return;
     };
+
+    // display prev forecast info (location, country, longitude, latitude) 
+    console.log("historyLS", historyLS);
+    renderLS();
+   
 }; 
+
+// function getLocalStorage (location, country, longitude, latitude) {
+function saveLocalStorage() {
+    console.log(" >>> inside saveLocalStorage");
+    console.log("typeof historyLS, historyLS", typeof historyLS, historyLS);
+    if (locationFromLS) {
+        return;
+    };
+    // console.log("typeof historyLS.location, historyLS", typeof historyLS[0], historyLS[0].location);
+    console.log("storeData", storeData);
+    if (historyLS === null || historyLS.length === 0 ) {
+        // init storage
+        noLS = true;
+        if (storeData.location == "" ){
+            console.log("no data to store");
+            return;
+        };
+        historyLS[0] = storeData;    
+    };
+    // search LocalStorage for StoreData Location
+    returnIdx = historyLS.findIndex(function(item) {
+        return item.location == storeData.location
+    });
+    if (returnIdx > -1) {  
+        return;
+    };
+    // if not found push object on array
+    historyLS.push(storeData);
+    localStorage.setItem("history", JSON.stringify(historyLS));
+   
+}; 
+
+
+// The following function renders items in a todo list as <li> elements
+function renderLS() {
+    console.log(" >>> inside renderLS");
+    // Clear todoList element and update todoCountSpan
+    $("#historyList").empty();
+  
+    // Render a new li for each todo
+    historyLS.forEach(function(item,index){ 
+        // console.log("index>item.location=>", index, item.location);
+        var btnNbr = index + 1;
+        var liEl = $("<li><button id=\"btn" + btnNbr + "\" type=\"button\" class=\"btn btn-secondary btn-lg btn-block\"></button></li>");      
+        // console.log("liEl=>", liEl);
+        $("#historyList").append(liEl);
+        var btnId = "#btn" + btnNbr;
+        // console.log("btnId=>", btnId);
+        $(btnId).attr("data-index", index);
+        $(btnId).text(item.location);
+      
+    });
+  };
 
 function displayWeather(){
     console.log(" >>> inside displayWeather");
-    $("#currentDate").html(" " + dayjs().format("dddd, MM/DD/YYYY"));
+    console.log("historyLS=>", historyLS);
+    console.log("storeDate=>", storeData);
+    console.log("forecast=>", forecast);
+    console.log("currWeather=>", currWeather);
+    iconCode = currWeather.icon
+    iconUrl = "http://openweathermap.org/img/w/" + iconCode + ".png";
+    cssUrl = "url(" + iconUrl + ")";
+    console.log("css URL=>", cssUrl);
+    $("#currlocation").text(storeData.location);
+    $("#currDay").text(currWeather.day);
+    $("#currTemp").text(currWeather.temp);
+    $("#currWind").text(currWeather.temp);
+    $("#currHumidity").text(currWeather.temp);
+    // $("#currIcon").html("<img src=" + iconURL + ">");
+    // $("#currIcon").attr("src", iconUrl);
+    // $('#wicon').attr('src', iconurl);
+    $( "#currIcon" ).css( {"background-image" : cssUrl } );
+    $("#currlocation").val(storeData.location);
+    $("#currentDay").val(" " + dayjs().format("ddd, MM/DD"));
 
-}
-
-async function getWeatherAPIdata() {
-    const response = await fetch(weatherApiUrl);
-    const forecastData = await response.json();
-    // console.log(">>forecastData<<", forecastData);
-    gatherForecast(forecastData);
 };
 
-async function getGeoAPIdata() {
-    const response = await fetch(geoApiUrl);
-    const geoData = await response.json();
-    // console.log(">>geoData<<", geoData);
-    // useGeotoGetWeather(geoData);
-    // console.log(" >>>>> inside storeGeo ", geoData)
-    // console.log("geo lat=>", geoData.results[0].geometry.location.lat, "< -geo lng=>", geoData.results[0].geometry.location.lng, "<br>");
-    geoReturnLongitude = geoData.results[0].geometry.location.lng;
-    geoReturnLatitude = geoData.results[0].geometry.location.lat;
-    weatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + geoReturnLatitude + "&lon=" + geoReturnLongitude + "&appid=" + openKey + "&mode={json}&units=imperial&cnt=40";
-    // console.log(weatherApiUrl);
+async function getWeatherAPIdata(longitude,latitude) {
+// console.log(" >>>>>>  inside getWeatherAPIdata  >>>>>>>>>>>>>>>");
+weatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longitude + "&appid=" + openKey + "&mode={json}&units=imperial&cnt=40";
+// console.log(weatherApiUrl);
+    const response = await fetch(weatherApiUrl);
+    const weatherData = await response.json();
+    // console.log(">>weatherData<<", weatherData);
+    gatherForecast(weatherData);
+    displayWeather();
+    saveLocalStorage();
+    renderLS();
+};
 
+async function getGeoAPIdata(geoApiUrl) {
+// console.log(" >>>>>>  inside getGeoAPIdata  >>>>>>>>>>>>>>>");
+    const response = await fetch(geoApiUrl);  // first promise
+    const geoData = await response.json();      // second promise
+    // console.log(">>geoApiUrl<<", geoApiUrl);
+    // console.log(">>geoData<<", geoData);
+
+    storeData.location = geoData.results[0].formatted_address;
+    storeData.longitude = geoData.results[0].geometry.location.lng.toFixed(6);
+    storeData.latitude = geoData.results[0].geometry.location.lat.toFixed(6);
+    // console.log(" ", storeData);
+    
     //  >>>>>>>>>>>>>>>>> Open Weather API Call 
-    getWeatherAPIdata()
+    getWeatherAPIdata(storeData.longitude,storeData.latitude)
     .then(response => {
-        console.log('yay');
+        console.log('yay from getGeoAPIdata');
     })
     .catch(error => {
         console.log('error!');
@@ -351,126 +458,83 @@ async function getGeoAPIdata() {
     });
 };
 
+function setSearchCriteria() {
+// console.log(" >>>>>>  inside setSearchCriteria >>>>>>>>>>>>>>>");
+    // use input data to call geo Location API
+    storeData.location = $("#location").val();
+    // console.log("storeData=>", storeData);
+    //  enter location into Geo location api url
+    var geoLocation = storeData.location.replace(", ",",+").replace(" ","%20");
+    // console.log("geoLocation", geoLocation)
 
-//  >>>>>>>>>>>>>>>>> Google geo API Call 
-getGeoAPIdata()
+    var geoApiUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + geoLocation + "&key=" + geoKey;
+
+    //  >>>>>>>>>>>>>>>>> Google geo API Call 
+    getGeoAPIdata(geoApiUrl)
+    .then(response => {
+        console.log('geo okay');    
+    })
+    .catch(error => {
+        console.log('error geo!');
+        console.error(error);
+    });
+};
+
+function setHistoryCriteria(histBtn) {
+// console.log(" >>>>>>  inside setHistoryCriteria >>>>>>>>>>>>>>>");
+// console.log("histBtn", histBtn)
+// console.log("button press=>", $("#" + histBtn).data("index"));
+var index = $("#" + histBtn).data("index")
+storeData.location = historyLS[index].location;
+storeData.longitude = historyLS[index].longitude;
+storeData.latitude = historyLS[index].latitude;
+// console.log(" ", storeData);
+
+//  >>>>>>>>>>>>>>>>> Open Weather API Call 
+getWeatherAPIdata(storeData.longitude,storeData.latitude)
 .then(response => {
-  console.log('yay geo');
+    console.log('yay from getGeoAPIdata');
 })
 .catch(error => {
-    console.log('error geo!');
+    console.log('error!');
     console.error(error);
 });
-function initDocument() {
-    
-  $("#currentDate").html(" " + dayjs().format("dddd, MM/DD/YYYY"));
-  daySwitch = true;
-    if (dayjs().format("HH") > "17") {
-        daySwitch = false;
-    };
-
-    getLocalStorage();
 };
-    // let entries = Object.entries(forecastData);
-    // console.log("entries>", entries);
-    // console.log("core    cod=>", forecastData.cod, "--MSG=>", forecastData.message,"--cnt=>", forecastData.cnt, "<br>");
-    // console.log("city header info > name=>", forecastData.city.name, "--country=>", forecastData.city.country,"<--lon=>", forecastData.city.coord.lon, "<--lat=>", forecastData.city.coord.lat,"<--sunriseUTC=>", forecastData.city.sunrise, "<--sunsetUTC=>", forecastData.city.sunset, "<br>");
-    // console.log('forecast data', '<br>');
-    // console.log("=====date txt ======= main temp == min == max ===  humidity ==== desc ==== main ====icon",  "<br>");
-          // console.log("===>", forecastData.list[i].dt_txt, "<   >", forecastData.list[i].main.temp, "<   >", forecastData.list[i].main.temp_min, "<   >", forecastData.list[i].main.temp_max,  "< ===>", forecastData.list[i].main.humidity, "< == >", forecastData.list[i].weather[0].description, "     =>", forecastData.list[i].weather[0].main, "     =>", forecastData.list[i].weather[0].icon, "< == >"  , iconUrl, "<br>");
-//  ********Begin ******************  moved into function getGeoAPIdata
-// function useGeotoGetWeather(geoData){
-//     console.log(" >>>>> inside storeGeo ", geoData)
-//     console.log("geo lat=>", geoData.results[0].geometry.location.lat, "< -geo lng=>", geoData.results[0].geometry.location.lng, "<br>");
-//     geoReturnLongitude = geoData.results[0].geometry.location.lng ;
-//     geoReturnLatitude = geoData.results[0].geometry.location.lat;
-//     weatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + geoReturnLatitude + "&lon=" + geoReturnLongitude + "&appid=" + openKey + "&mode={json}&units=imperial&cnt=40";
-//     console.log(weatherApiUrl)
-//     //  >>>>>>>>>>>>>>>>> Open Weather API Call 
-//     getWeatherAPIdata()
-//     .then(response => {
-//         console.log('yay');
-//     })
-//     .catch(error => {
-//         console.log('error!');
-//         console.error(error);
-//     });
-// };
-//  ********end ******************  moved into function getGeoAPIdata
+
 
 // this is setup when document is finished loading
 $(document).ready(function() {
-    // console.log("document ready  >>>>>>>>>>>>>>>>>>>>>>");
-    
+// console.log("document ready  >>>>>>>>>>>>>>>>>>>>>>");
     // initialize Document
     initDocument();
+});
 
-    $("#currentDay").html(" " + dayjs().format("dddd, MM/DD/YYYY"));
+// wait for user Input
+$("#searchBox").on("click", function (event) {
+// console.log(" >>>>>>>>>click event happened >>>>>>>>>>>>>");
+    event.preventDefault();
+    // console.log ("event=>", event);
 
-// when the document is ready init the screen and wait for UI
-    $("#planner").on("click", function (event) {
-        console.log(" >>>>>>>>>document is ready>>>>>>>>>>>>>");
+    if (event.target !== event.currentTarget) {
+    // console.log ("event target localName=>", event.target.localName);
+        // console.log ("event target id=>", event.target.id);
+        if (event.target.localName === "button") {
 
-
-        if (event.target !== event.currentTarget) {
-        //   console.log ("event target localName=>", event.target.localName);
-        //   console.log ("event target id=>", event.target.id);
-        //   console.log ("event=>", event);
-        //   if (event.target.localName !== "button") {
-            // console.log(event.target.localName, " not = button");
-        //   };
-        //   if (event.target.localName == "button") {
-        //     switch (event.target.id) {
-        //     case "btn07":
-        //         scheduleLS[0] = $("#appt07").val();
-        //         break;
-        //     case "btn08":
-        //         scheduleLS[1] = $("#appt08").val();
-        //         break;
-        //     case "btn09":
-        //         scheduleLS[2] = $("#appt09").val();
-        //         break;
-        //     case "btn10":
-        //         scheduleLS[3] = $("#appt10").val();
-        //         break;
-        //     case "btn11":
-        //         scheduleLS[4] = $("#appt11").val();
-        //         break;
-        //     case "btn12":
-        //         scheduleLS[5] = $("#appt12").val();
-        //         break;
-        //     case "btn13":
-        //         scheduleLS[6] = $("#appt13").val();
-        //         break;
-        //     case "btn14":
-        //         scheduleLS[7] = $("#appt14").val();
-        //         break;
-        //     case "btn15":
-        //         scheduleLS[8] = $("#appt15").val();
-        //         break;
-        //     case "btn16":
-        //         scheduleLS[9] = $("#appt16").val();
-        //         break;
-        //     case "btn17":
-        //         scheduleLS[10] = $("#appt17").val();
-        //         break;
-        //     case "btn18":
-        //         scheduleLS[11] = $("#appt18").val();
-        //         break;
-        //     case "btn19":
-        //         scheduleLS[12] = $("#appt19").val();
-        //         break;
-        //     default:
-        //         console.log("no button should get here");
-        //         console.log(event);
-        //         break;
-        //   };
-        //   };
-
-            localStorage.setItem("schedule", JSON.stringify(scheduleLS));
-            // console.log("save to localStorage=>", scheduleLS)
+            if (event.target.id == "submitBtn") 
+            {
+                // console.log("entering Submit Button");
+                locationFromLS = false;
+                setSearchCriteria();  
+            } else {
+                // console.log("entering History Buttons");
+                //  use history button to get geo Location data
+                locationFromLS = true;
+                setHistoryCriteria(event.target.id);  
+            };
+        
         };
-    // stop bubbling
-    // event.stopPropagation();
-    });
+
+    };
+// stop bubbling
+// event.stopPropagation();
 });

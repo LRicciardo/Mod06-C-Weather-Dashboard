@@ -34,6 +34,13 @@
 
 }
 
+#weatherBox {
+    /* display:none; */
+    height: 100px;
+    border-bottom: 2px #2d3436;
+    background-color: #74b9ff;
+}
+
 #currIcon {
     height: 200px;
     width: 150px;
