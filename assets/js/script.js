@@ -467,10 +467,8 @@ function setSearchCriteria() {
 // console.log(" >>>>>>  inside setSearchCriteria >>>>>>>>>>>>>>>");
     // use input data to call geo Location API
     storeData.location = $("#location").val();
-    // console.log("storeData=>", storeData);
     //  enter location into Geo location api url
     var geoLocation = storeData.location.replace(", ",",+").replace(" ","%20");
-    // console.log("geoLocation", geoLocation)
 
     var geoApiUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + geoLocation + "&key=" + geoKey;
 
@@ -487,8 +485,6 @@ function setSearchCriteria() {
 
 function setHistoryCriteria(histBtn) {
 // console.log(" >>>>>>  inside setHistoryCriteria >>>>>>>>>>>>>>>");
-// console.log("histBtn", histBtn)
-// console.log("button press=>", $("#" + histBtn).data("index"));
 var index = $("#" + histBtn).data("index")
 storeData.location = historyLS[index].location;
 storeData.longitude = historyLS[index].longitude;
