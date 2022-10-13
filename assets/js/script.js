@@ -348,24 +348,32 @@ function getLocalStorage () {
 
 //  saveLocalStorage (location, longitude, latitude) {
 function saveLocalStorage() {
-    // console.log(" >>> inside saveLocalStorage");
+    console.log(" >>> inside saveLocalStorage");
     if (locationFromLS) {
+        console.log("locationFromLS==>return");
         return;
     };
     if (historyLS === null || historyLS.length === 0 ) {
+        console.log("historyLS = null", historyLS);
+        console.log("or historyLS.length =zero", historyLS.length);
         // init storage
         noLS = true;
         if (storeData.location == "" ){
-            // console.log("no data to store");
+            console.log("storeData.location== \"\"", storeData.location);
+            console.log("no data to store");
             return;
         };
+        console.log("assign storeData to historyLS[0]", storeData);
         historyLS[0] = storeData;    
     };
+    console.log("historyLS", historyLS);
+    console.log("storeData", storeData);
     // search LocalStorage for StoreData Location
     returnIdx = historyLS.findIndex(function(item) {
         return item.location == storeData.location
     });
     if (returnIdx > -1) {  
+        console.log("found");
         return;
     };
     // if not found push object on array
