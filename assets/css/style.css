@@ -44,7 +44,7 @@
 #currIcon {
     height: 200px;
     width: 150px;
-    background-image: url("http://openweathermap.org/img/w/01d.png");
+    background-image: url("https://openweathermap.org/img/w/01d.png");
     background-size: contain;
     background-position: center;
 
@@ -60,7 +60,7 @@
 #day01Card {
     height: 200px;
     width: 150px;
-    background-image: url("http://openweathermap.org/img/w/01d.png");
+    background-image: url("https://openweathermap.org/img/w/01d.png");
     background-size: contain;
     background-position: center;
     background-color: #74b9ff;
@@ -70,7 +70,7 @@
 #day02Card {
     height: 200px;
     width: 150px;
-    background-image: url("http://openweathermap.org/img/w/01d.png");
+    background-image: url("https://openweathermap.org/img/w/01d.png");
     background-size: contain;
     background-position: center;
     background-color: #74b9ff;
@@ -80,7 +80,7 @@
 #day03Card {
     height: 200px;
     width: 150px;
-    background-image: url("http://openweathermap.org/img/w/01d.png");
+    background-image: url("https://openweathermap.org/img/w/01d.png");
     background-size: contain;
     background-position: center;
     background-color: #74b9ff;
@@ -90,7 +90,7 @@
 #day04Card {
     height: 200px;
     width: 150px;
-    background-image: url("http://openweathermap.org/img/w/01d.png");
+    background-image: url("https://openweathermap.org/img/w/01d.png");
     background-size: contain;
     background-position: center;
     background-color: #74b9ff;
@@ -99,7 +99,7 @@
 #day05Card {
     height: 200px;
     width: 150px;
-    background-image: url("http://openweathermap.org/img/w/01d.png");
+    background-image: url("https://openweathermap.org/img/w/01d.png");
     background-size: contain;
     background-position: center;
     background-color: #74b9ff;
