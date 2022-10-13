@@ -437,8 +437,7 @@ weatherApiUrl = "https://api.openweathermap.org/data/2.5/forecast?lat=" + latitu
     // console.log(">>weatherData<<", weatherData);
     gatherForecast(weatherData);
     displayWeather();
-    saveLocalStorage();
-    
+    saveLocalStorage(); 
 };
 
 async function getGeoAPIdata(geoApiUrl) {
