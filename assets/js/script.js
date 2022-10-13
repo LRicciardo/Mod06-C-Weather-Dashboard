@@ -1,49 +1,19 @@
-// var apiUrl = 'https://api.github.com/users/' + user + '/repos';
+// User Story
+//  AS A traveler
+//  I WANT to see the weather outlook for multiple cities
+//  SO THAT I can plan a trip accordingly
+// Acceptance Criteria
+// x  GIVEN a weather dashboard with form inputs
+//  WHEN I search for a city
+// x THEN I am presented with current and future conditions for that city and that city is added to the search history
+//  WHEN I view current weather conditions for that city
+// x THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, and the the wind speed
+//  WHEN I view future weather conditions for that city
+// x THEN I am presented with a 5-day forecast that displays the date, an icon representation of weather conditions, the temperature, the wind speed, and the humidity
+//  WHEN I click on a city in the search history
+// x THEN I am again presented with current and future conditions for that city
 
-var forecast = [
-        {
-        yymmdd: null,
-        min: 0,
-        max: 0,
-        windSpeed: 0,
-        humidity: 0,
-        icon: null },
-        {
-        yymmdd: null,
-        min: 0,
-        max: 0,
-        windSpeed: 0,
-        humidity: 0,
-        icon: null },
-        {
-        yymmdd: null,
-        min: 0,
-        max: 0,
-        windSpeed: 0,
-        humidity: 0,
-        icon: null },
-        {
-        yymmdd: null,
-        min: 0,
-        max: 0,
-        windSpeed: 0,
-        humidity: 0,
-        icon: null },
-        {
-        yymmdd: null,
-        min: 0,
-        max: 0,
-        windSpeed: 0,
-        humidity: 0,
-        icon: null },
-        {
-        yymmdd: null,
-        min: 0,
-        max: 0,
-        windSpeed: 0,
-        humidity: 0,
-        icon: null }
-];
+
 var forecastTime = dayjs('1664885779').format("HH:mm");
 // Geo Location API queries, selectors, API key and URL
 // var geoLocation = "Houston,+TX";
@@ -249,6 +219,51 @@ var currWeather = {
         humidity: 0,
        icon: null };
 
+var forecast = [
+        {
+        yymmdd: null,
+        min: 0,
+        max: 0,
+        windSpeed: 0,
+        humidity: 0,
+        icon: null },
+        {
+        yymmdd: null,
+        min: 0,
+        max: 0,
+        windSpeed: 0,
+        humidity: 0,
+        icon: null },
+        {
+        yymmdd: null,
+        min: 0,
+        max: 0,
+        windSpeed: 0,
+        humidity: 0,
+        icon: null },
+        {
+        yymmdd: null,
+        min: 0,
+        max: 0,
+        windSpeed: 0,
+        humidity: 0,
+        icon: null },
+        {
+        yymmdd: null,
+        min: 0,
+        max: 0,
+        windSpeed: 0,
+        humidity: 0,
+        icon: null },
+        {
+        yymmdd: null,
+        min: 0,
+        max: 0,
+        windSpeed: 0,
+        humidity: 0,
+        icon: null }
+];
+
 // find the min and max temps, max windspeed
 function    findMinMax (date, min, max, humidity, windSpeed, icon) {
     // console.log(" >>>>> inside findMinMax ", dayIdx, date, min, max)
@@ -272,7 +287,7 @@ function    findMinMax (date, min, max, humidity, windSpeed, icon) {
 //  initialize switches, flags and variables
 //  load history onto screen
 function initDocument() {
-    console.log(" >>>>>>  inside initDocument  >>>>>>>>>>>>>>>");
+// console.log(" >>>>>>  inside initDocument  >>>>>>>>>>>>>>>");
         
       $("#currentDate").html(" " + dayjs().format("dddd, MM/DD/YYYY"));
       daySwitch = true;
@@ -281,24 +296,16 @@ function initDocument() {
         };
     
         getLocalStorage();
-        // $("#weatherBox").show();
         $("#weatherBox").hide();
     };
 
 function gatherForecast(weatherData){
-    console.log(" >>>>> inside gatherForecast ", weatherData);
-    console.log("storeData=>", storeData)
-    // if (locationFromLS) {
-        
-    // } else {
-        
-    // }
+// console.log(" >>>>> inside gatherForecast ", weatherData);
    
     for(var i=0; i<weatherData.list.length;i++){
         // console.log("inside for loop >>> i=>", i);
         forecastYYMMDD = dayjs(weatherData.list[i].dt_txt).format("YYYYMMDD");
         forecastTime = dayjs(weatherData.list[i].dt_txt).format("HH:mm");
-        // console.log("forecast date=>", forecastYYMMDD, "< time=>", forecastTime);
         if (i === 0) {
             // current information is on first record
             currWeather.yymmdd = dayjs(weatherData.list[i].dt_txt).format("ddd, MM/DD"); 
@@ -314,7 +321,6 @@ function gatherForecast(weatherData){
             forecast[0].windSpeed = weatherData.list[i].wind.speed;
             forecast[0].icon = weatherData.list[i].weather[0].icon;
             dayIdx = 0;   
-            console.log ("init forecast");
         } else {          
             findMinMax(forecastYYMMDD, weatherData.list[i].main.temp_min, weatherData.list[i].main.temp_max, weatherData.list[i].main.humidity, weatherData.list[i].wind.speed, weatherData.list[i].weather[0].icon);
             if (dayIdx > 5) {
@@ -325,37 +331,32 @@ function gatherForecast(weatherData){
 
 };
 
-// function getLocalStorage (location, country, longitude, latitude) {
+//  getLocalStorage (location, longitude, latitude) {
 function getLocalStorage () {
-    console.log(" >>> inside getLocalStorage");
+    // console.log(" >>> inside getLocalStorage");
     historyLS = JSON.parse(localStorage.getItem("history")) || [];
     if (historyLS === null || historyLS.length === 0 ) {
         // init storage
         noLS = true;
         historyLS = [];    
-        console.log(" no forecast Data in Local Storage");
+        // console.log(" no forecast Data in Local Storage");
         return;
     };
 
-    console.log("historyLS", historyLS);
     renderLS(historyLS);
-   
 }; 
 
-// function getLocalStorage (location, country, longitude, latitude) {
+//  saveLocalStorage (location, longitude, latitude) {
 function saveLocalStorage() {
-    console.log(" >>> inside saveLocalStorage");
-    console.log("typeof historyLS, historyLS", typeof historyLS, historyLS);
+    // console.log(" >>> inside saveLocalStorage");
     if (locationFromLS) {
         return;
     };
-    // console.log("typeof historyLS.location, historyLS", typeof historyLS[0], historyLS[0].location);
-    console.log("storeData", storeData);
     if (historyLS === null || historyLS.length === 0 ) {
         // init storage
         noLS = true;
         if (storeData.location == "" ){
-            console.log("no data to store");
+            // console.log("no data to store");
             return;
         };
         historyLS[0] = storeData;    
@@ -374,18 +375,21 @@ function saveLocalStorage() {
 }; 
 
 
-// The following function renders items in a todo list as <li> elements
+// The following function renders items in a list as <li> elements
 function renderLS(historyLS) {
-    console.log(" >>> inside renderLS");
-    // Clear todoList element and update todoCountSpan
+    // console.log(" >>> inside renderLS");
+    // Clear historyList element(s) 
     $("#historyList").empty();
   
-    // Render a new li for each todo
+    // Render a new li for each history item
     historyLS.forEach(function(item,index){ 
 
         var btnNbr = index + 1;
-        var liEl = $("<li><button id=\"btn" + btnNbr + "\" type=\"button\" class=\"btn btn-secondary btn-lg btn-block\"></button></li>");      
+        // create li as a button
+        var liEl = $("<li><button id=\"btn" + btnNbr + "\" type=\"button\" class=\"btn btn-secondary btn-lg btn-block\"></button></li>");
+        // append to list element  
         $("#historyList").append(liEl);
+        // add data atribute and text
         var btnId = "#btn" + btnNbr;
         $(btnId).attr("data-index", index);
         $(btnId).text(item.location);
@@ -394,15 +398,11 @@ function renderLS(historyLS) {
   };
 
 function displayWeather(){
-    console.log(" >>> inside displayWeather");
-    console.log("historyLS=>", historyLS);
-    console.log("storeDate=>", storeData);
-    console.log("forecast=>", forecast);
-    console.log("currWeather=>", currWeather);
+    // console.log(" >>> inside displayWeather");
 
-    iconUrl = "url(http://openweathermap.org/img/w/%icon%.png)";
+    iconUrl = "url(https://openweathermap.org/img/w/%icon%.png)";
     cssUrl = iconUrl.replace("%icon%", currWeather.icon);
-    console.log("css URL=>", cssUrl);
+    // console.log("css URL=>", cssUrl);
     $( "#currIcon" ).css( {"background-image" : cssUrl } );
     $("#currlocation").text(storeData.location);
     $("#currDay").text(" " + dayjs().format("ddd, MM/DD"));
@@ -412,16 +412,10 @@ function displayWeather(){
 
     var cardIdx = 1;
     for(var i=0; i < forecast.length; i++) {
-
-        // if (i === 0 && forecast[5].yymmdd !== "") {
-        //     console.log(i , forecast[5].yymmdd);
-        //     i++;
-        // };
-            
-        console.log(i , forecast[i].yymmdd, forecast[5].yymmdd, forecast.length);
+        // console.log(i , forecast[i].yymmdd, forecast[5].yymmdd, forecast.length);
         // prompt("i++ why?");
         cssUrl = iconUrl.replace("%icon%", forecast[i].icon);
-        console.log("css URL=>", cssUrl);
+        // console.log("css URL=>", cssUrl);
         $("#day0" + cardIdx + "Card").css( {"background-image" : cssUrl } );
         var day = dayjs(forecast[i].yymmdd).format("ddd, MM/DD");
         $("#d0" + cardIdx + "CrdHdg").text(day);
@@ -431,15 +425,12 @@ function displayWeather(){
         $("#d0" + cardIdx + "Hum").text(forecast[i].humidity);   
         cardIdx++;       
     };
-
-
     $("#weatherBox").show();
-
 };
 
 async function getWeatherAPIdata(longitude,latitude) {
 // console.log(" >>>>>>  inside getWeatherAPIdata  >>>>>>>>>>>>>>>");
-weatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longitude + "&appid=" + openKey + "&mode={json}&units=imperial&cnt=40";
+weatherApiUrl = "https://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longitude + "&appid=" + openKey + "&mode={json}&units=imperial&cnt=40";
 // console.log(weatherApiUrl);
     const response = await fetch(weatherApiUrl);
     const weatherData = await response.json();
