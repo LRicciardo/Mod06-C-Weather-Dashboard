@@ -6,109 +6,57 @@
     --dark: #2d3436;
     --border-radius: .3rem;
   
-  }
-
-  body {
-    background-color: var(--primary);
-    margin: 0;
-    padding: 0;
-    font-family: "IBM Plex Sans", sans-serif;
-    color: var(--dark);
-    line-height: 1.5;
-    font-size: 16px;
-  }
-
-#banner {
-    height: 50px;
-    border-bottom: 2px #2d3436;
 }
 
-#banner {
-    height: 50px;
-    border-bottom: 2px #2d3436;
+body {
+/* background-color: var(--primary); */
+margin: 0;
+padding: 0;
+font-family: "IBM Plex Sans", sans-serif;
+color: var(--dark);
+line-height: 1.5;
+font-size: 16px;
+background-color: var(--secondary);
 }
 
-#currentWeather {
+.jumbotron {
+        background-image: url("../images/High-Resolution-Wallpaper-Desktop-620x349.jpg");
+        /* background-size: contain; */
+        /* background-position: center; */
+}
+
+/* #currentWeather {
     height: 100px;
     border-bottom: 2px #2d3436;
 
-}
+} */
 
-#weatherBox {
+/* #weatherBox { */
     /* display:none; */
-    height: 100px;
-    border-bottom: 2px #2d3436;
-    background-color: #74b9ff;
-}
+    /* height: 100px; */
+    /* border-bottom: 2px #2d3436; */
+    /* background-color: #74b9ff; */
+/* } */
 
 #currIcon {
-    height: 200px;
+    /* height: 200px; */
     width: 150px;
-    background-image: url("https://openweathermap.org/img/w/01d.png");
+    /* background-image: url("https://openweathermap.org/img/w/01d.png"); */
     background-size: contain;
     background-position: center;
 
 }
 
-#forecastBox {
+/* #forecastBox {
+    height: 200px;
     color: black;
-    font-weight: 600;
-    text-emphasis: var(--dark);
     text-shadow: black;
-}
-
-#day01Card {
-    height: 200px;
-    width: 150px;
-    background-image: url("https://openweathermap.org/img/w/01d.png");
-    background-size: contain;
-    background-position: center;
-    background-color: #74b9ff;
-
-}
-
-#day02Card {
-    height: 200px;
-    width: 150px;
-    background-image: url("https://openweathermap.org/img/w/01d.png");
-    background-size: contain;
-    background-position: center;
-    background-color: #74b9ff;
-
-}
-
-#day03Card {
-    height: 200px;
-    width: 150px;
-    background-image: url("https://openweathermap.org/img/w/01d.png");
-    background-size: contain;
-    background-position: center;
-    background-color: #74b9ff;
-
-}
-
-#day04Card {
-    height: 200px;
-    width: 150px;
-    background-image: url("https://openweathermap.org/img/w/01d.png");
-    background-size: contain;
-    background-position: center;
-    background-color: #74b9ff;
-}
-
+} */
+/* 
+#day01Card,
+#day02Card,
+#day03Card,
+#day04Card,
 #day05Card {
-    height: 200px;
-    width: 150px;
-    background-image: url("https://openweathermap.org/img/w/01d.png");
-    background-size: contain;
-    background-position: center;
-    background-color: #74b9ff;
-}
-
-
-
-
-
-
-
-
+    height: 450px;
+}; */

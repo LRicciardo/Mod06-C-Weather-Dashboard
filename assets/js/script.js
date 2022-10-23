@@ -17,114 +17,16 @@
 var forecastTime = dayjs('1664885779').format("HH:mm");
 // Geo Location API queries, selectors, API key and URL
 // var geoLocation = "Houston,+TX";
-var geoKey = "AIzaSyBzUZm38CUd6AtsYcewUaQwnKUnZPMI7mg";
+const geoKey = "AIzaSyBzUZm38CUd6AtsYcewUaQwnKUnZPMI7mg";
 // var geoApiUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + geoLocation + "&key=" + geoKey;
 
-//  informational data layout fron Geo location API
-var geoDataLayout = {
-    results: [
-        {
-            address_components: [
-                {
-                    long_name: "1600",
-                    short_name: "1600",
-                    types: [
-                        "street_number"
-                    ],
-                },
-                {
-                    long_name: "Amphitheatre Parkway",
-                    short_name: "Amphitheatre Pkwy",
-                    types: [
-                        "route"
-                    ],
-                },
-                {
-                    long_name: "Mountain View",
-                    short_name: "Mountain View",
-                    types: [
-                        "locality",
-                        "political"
-                    ],
-                },
-                {
-                    long_name: "Santa Clara County",
-                    short_name: "Santa Clara County",
-                    types: [
-                        "administrative_area_level_2",
-                        "political"
-                    ],
-                },
-                {
-                    long_name: "California",
-                    short_name: "CA",
-                    types: [
-                        "administrative_area_level_1",
-                        "political"
-                    ],
-                },
-                {
-                    long_name: "United States",
-                    short_name: "US",
-                    types: [
-                        "country",
-                        "political"
-                    ],
-                },
-                {
-                    long_name: "94043",
-                    short_name: "94043",
-                    types: [
-                        "postal_code"
-                    ],
-                }
-            ],
-            formatted_address: "1600 Amphitheatre Pkwy, Mountain View, CA 94043, USA",
-            geometry: {
-                location: {
-                    lat: 37.4224428,
-                    lng: -122.0842467
-                },
-                location_type: "ROOFTOP",
-                viewport: {
-                    northeast: {
-                        lat: 37.4239627802915,
-                        lng: -122.0829089197085
-                    },
-                    southwest: {
-                        lat: 37.4212648197085,
-                        lng: -122.0856068802915
-                    }
-                }
-            },
-            place_id: "ChIJeRpOeF67j4AR9ydy_PIzPuM",
-            plus_code: {
-                compound_code: "CWC8+X8 Mountain View, CA",
-                global_code: "849VCWC8+X8"
-            },
-            types: [
-                "street_address"
-            ]
-        }
-    ],
-    status: "OK"
-};
 // location Data created from geo location API
 var geoData = [];
-// holding variables ?
-var geoReturnLongitude = -95.358421 ;
-var geoReturnLatitude = 29.749907;
-
-
-// dummy longitude and latitude for testing weather API
-var longitude = -95.358421 ;
-var latitude = 29.749907;
-
 
 // weather API queries, selectors and API key
-var openKey = "2dbbe96da045c9cf9ec08f3837c40596";
-var openKeyName = "Mod06-key"
-var openRecCnt = 40;
+const openKey = "2dbbe96da045c9cf9ec08f3837c40596";
+const openKeyName = "Mod06-key"
+const openRecCnt = 40;
 // cnt= the number of timestamps
 // units = units of measurements returned (standard-is Kelvin)
 // var weatherApiUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longitude + "&appid=" + openKey + "&mode={json}&units=imperial&cnt=" + openRecCnt;
@@ -133,340 +35,247 @@ http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country
 // assumption: requested 40 count = 5 days 
 // data layout is by location
 //  location contains an array of 3-hour spans of data and then the location information
-
-//  informational data layout fron weather API
-var weatherDataLayout =[{
-        cod: "200",
-        message: 0,
-        cnt: 40,
-        list: [{
-            dt: 1661871600,
-            main: {
-              temp: 296.76,
-              feels_like: 296.98,
-              temp_min: 296.76,
-              temp_max: 297.87,
-              pressure: 1015,
-              sea_level: 1015,
-              grnd_level: 933,
-              humidity: 69,
-              temp_kf: -1.11
-            },
-            weather: [{
-                id: 500,
-                main: "Rain",
-                description: "light rain",
-                icon: "10d"
-            }],
-            clouds: {
-              all: 100
-            },
-            wind: {
-              speed: 0.62,
-              deg: 349,
-              gust: 1.18
-            },
-            visibility: 10000,
-            pop: 0.32,
-            rain: {
-              ThreeHour: 0.26
-            },
-            sys: {
-              pod: "d"
-            },
-            dt_txt: "2022-08-30 15:00:00"
-            }],
-            city: {
-              id: 3163858,
-              name: "Zocca",
-              coord: {
-              lat: 44.34,
-              lon: 10.99
-              },
-              country: "IT",
-              population: 4593,
-              timezone: 7200,
-              sunrise: 1661834187,
-              sunset: 1661882248
-          }
-        }
-];
 // forecast Data created from weather API
 var weatherData =[];
+var forecastData =[];
 // var iconCode = "01d";
 // var iconUrl = "http://openweathermap.org/img/wn/" + iconCode + ".png";
 
+const iconUrl = "url(https://openweathermap.org/img/w/%ICON%.png)";
 
 // Local Storage variables
-var locationFromLS = false;  // set flag to true if location found in LS
-var noLS = true;            // set flag to false if data in LS
+let locationFromLS = false;  // set flag to true if location found in LS
+let noLS = true;            // set flag to false if data in LS
 
-var historyLS = [{
+let historyLS = [{
     location: "",
     longitude: 0,
     latitude: 0
     }];
 
-var storeData = {
-    location: "",
-    longitude: 0,
-    latitude: 0 };
-
-var currWeather = {
-        day: null,
-        temp: 0,
-        windSpeed: 0,
-        humidity: 0,
-       icon: null };
-
-var forecast = [
-        {
-        yymmdd: null,
-        min: 0,
-        max: 0,
-        windSpeed: 0,
-        humidity: 0,
-        icon: null },
-        {
-        yymmdd: null,
-        min: 0,
-        max: 0,
-        windSpeed: 0,
-        humidity: 0,
-        icon: null },
-        {
-        yymmdd: null,
-        min: 0,
-        max: 0,
-        windSpeed: 0,
-        humidity: 0,
-        icon: null },
-        {
-        yymmdd: null,
-        min: 0,
-        max: 0,
-        windSpeed: 0,
-        humidity: 0,
-        icon: null },
-        {
-        yymmdd: null,
-        min: 0,
-        max: 0,
-        windSpeed: 0,
-        humidity: 0,
-        icon: null },
-        {
-        yymmdd: null,
-        min: 0,
-        max: 0,
-        windSpeed: 0,
-        humidity: 0,
-        icon: null }
-];
-
-// find the min and max temps, max windspeed
-function    findMinMax (date, min, max, humidity, windSpeed, icon) {
-    // console.log(" >>>>> inside findMinMax ", dayIdx, date, min, max)
-    if (forecast[dayIdx].yymmdd == date) {
-        if (forecast[dayIdx].min > min) {forecast[dayIdx].min = min};
-        if (forecast[dayIdx].max < max) {forecast[dayIdx].max = max};
-        if (forecast[dayIdx].windSpeed < windSpeed) {forecast[dayIdx].windSpeed = windSpeed};
-    } else {
-        dayIdx++;
-        // console.log ("add 1 to dayIdx")
-        if (dayIdx > 5) {return};
-        forecast[dayIdx].yymmdd = date;
-        forecast[dayIdx].min = min; 
-        forecast[dayIdx].max = max;
-        forecast[dayIdx].humidity = humidity;
-        forecast[dayIdx].windSpeed = windSpeed;
-        forecast[dayIdx].icon = icon;
-    };
-};
-
 //  initialize switches, flags and variables
 //  load history onto screen
 function initDocument() {
-// console.log(" >>>>>>  inside initDocument  >>>>>>>>>>>>>>>");
-        
-      $("#currentDate").html(" " + dayjs().format("dddd, MM/DD/YYYY"));
-      daySwitch = true;
-        if (dayjs().format("HH") > "17") {
-            daySwitch = false;
-        };
-    
-        getLocalStorage();
-        $("#weatherBox").hide();
-    };
-
-function gatherForecast(weatherData){
-// console.log(" >>>>> inside gatherForecast ", weatherData);
-   
-    for(var i=0; i<weatherData.list.length;i++){
-        // console.log("inside for loop >>> i=>", i);
-        forecastYYMMDD = dayjs(weatherData.list[i].dt_txt).format("YYYYMMDD");
-        forecastTime = dayjs(weatherData.list[i].dt_txt).format("HH:mm");
-        if (i === 0) {
-            // current information is on first record
-            currWeather.yymmdd = dayjs(weatherData.list[i].dt_txt).format("ddd, MM/DD"); 
-            currWeather.temp = weatherData.list[i].main.temp; 
-            currWeather.humidity = weatherData.list[i].main.humidity;
-            currWeather.windSpeed = weatherData.list[i].wind.speed;
-            currWeather.icon = weatherData.list[i].weather[0].icon;
-            // initialize forecast weather table
-            forecast[0].yymmdd = forecastYYMMDD; 
-            forecast[0].min = weatherData.list[i].main.temp_min; 
-            forecast[0].max = weatherData.list[i].main.temp_max;
-            forecast[0].humidity = weatherData.list[i].main.humidity;
-            forecast[0].windSpeed = weatherData.list[i].wind.speed;
-            forecast[0].icon = weatherData.list[i].weather[0].icon;
-            dayIdx = 0;   
-        } else {          
-            findMinMax(forecastYYMMDD, weatherData.list[i].main.temp_min, weatherData.list[i].main.temp_max, weatherData.list[i].main.humidity, weatherData.list[i].wind.speed, weatherData.list[i].weather[0].icon);
-            if (dayIdx > 5) {
-                i = weatherData.list.length;
-            };
-        };
-    };
-
+// console.log(" >>>>>>  inside initDocument  >>>>>>>>>>>>>>>");        
+  $("#currentDate").html(" " + dayjs().format("dddd, MM/DD/YYYY"));
+  daySwitch = true;
+  if (dayjs().format("HH") > "17") {
+    daySwitch = false;
+  };    
+  getLocalStorage();
+  $("#weatherBox").hide();
+  $("#forecastBox").hide();
 };
 
 //  getLocalStorage (location, longitude, latitude) {
 function getLocalStorage () {
-    // console.log(" >>> inside getLocalStorage");
-    historyLS = JSON.parse(localStorage.getItem("history")) || [];
-    if (historyLS === null || historyLS.length === 0 ) {
-        // init storage
-        noLS = true;
-        historyLS = [];    
-        // console.log(" no forecast Data in Local Storage");
-        return;
-    };
+  // console.log(" >>> inside getLocalStorage");
+  historyLS = JSON.parse(localStorage.getItem("history")) || [];
+  if (historyLS === null) {
+    historyLS = [];    
+  };
 
+  if (historyLS.length === 0 ) {
+    // init storage
+    noLS = true;
+  } else {
+    noLS = false;
     renderLS(historyLS);
+  };
 }; 
 
 //  saveLocalStorage (location, longitude, latitude) {
-function saveLocalStorage() {
-    console.log(" >>> inside saveLocalStorage");
-    if (locationFromLS) {
-        console.log("locationFromLS==>return");
-        return;
-    };
-    if (historyLS === null || historyLS.length === 0 ) {
-        console.log("historyLS = null", historyLS);
-        console.log("or historyLS.length =zero", historyLS.length);
-        // init storage
-        noLS = true;
-        if (storeData.location == "" ){
-            console.log("storeData.location== \"\"", storeData.location);
-            console.log("no data to store");
-            return;
-        };
-        console.log("assign storeData to historyLS[0]", storeData);
-        historyLS[0] = storeData;    
-    };
-    console.log("historyLS", historyLS);
-    console.log("storeData", storeData);
-    // search LocalStorage for StoreData Location
-    returnIdx = historyLS.findIndex(function(item) {
-        return item.location == storeData.location
-    });
-    if (returnIdx > -1) {  
-        console.log("found");
-        return;
-    };
-    // if not found push object on array
+function saveLocalStorage(location,latitude,longitude) {
+  // console.log(" >>> inside saveLocalStorage");
+  // console.log("historyLS", historyLS);
+
+  if (noLS) {
+    returnIdx = -1;
+  } else {  
+    // search LocalStorage for  Location
+    returnIdx = historyLS.findIndex(item => item.location == location);
+  };
+  // found in history or no localStorage
+  if (returnIdx === -1) { 
+    let storeData = {
+      location: location,
+      latitude: latitude ,
+      longitude: longitude
+      };
     historyLS.push(storeData);
+    noLS = false;
     localStorage.setItem("history", JSON.stringify(historyLS));
     renderLS(historyLS);
+  };
 }; 
-
 
 // The following function renders items in a list as <li> elements
 function renderLS(historyLS) {
-    // console.log(" >>> inside renderLS");
-    // Clear historyList element(s) 
-    $("#historyList").empty();
-  
-    // Render a new li for each history item
-    historyLS.forEach(function(item,index){ 
+  // console.log(" >>> inside renderLS");
+  // Clear historyList element(s) 
+  $("#historyList").empty();
 
-        var btnNbr = index + 1;
-        // create li as a button
-        var liEl = $("<li><button id=\"btn" + btnNbr + "\" type=\"button\" class=\"btn btn-secondary btn-lg btn-block\"></button></li>");
-        // append to list element  
-        $("#historyList").append(liEl);
-        // add data atribute and text
-        var btnId = "#btn" + btnNbr;
-        $(btnId).attr("data-index", index);
-        $(btnId).text(item.location);
-      
-    });
-  };
-
-function displayWeather(){
-    // console.log(" >>> inside displayWeather");
-
-    iconUrl = "url(https://openweathermap.org/img/w/%icon%.png)";
-    cssUrl = iconUrl.replace("%icon%", currWeather.icon);
-    // console.log("css URL=>", cssUrl);
-    $( "#currIcon" ).css( {"background-image" : cssUrl } );
-    $("#currlocation").text(storeData.location);
-    $("#currDay").text(" " + dayjs().format("ddd, MM/DD"));
-    $("#currTemp").text(currWeather.temp);
-    $("#currWind").text(currWeather.windSpeed);
-    $("#currHumidity").text(currWeather.humidity);
-
-    var cardIdx = 1;
-    for(var i=0; i < forecast.length; i++) {
-        // console.log(i , forecast[i].yymmdd, forecast[5].yymmdd, forecast.length);
-        // prompt("i++ why?");
-        cssUrl = iconUrl.replace("%icon%", forecast[i].icon);
-        // console.log("css URL=>", cssUrl);
-        $("#day0" + cardIdx + "Card").css( {"background-image" : cssUrl } );
-        var day = dayjs(forecast[i].yymmdd).format("ddd, MM/DD");
-        $("#d0" + cardIdx + "CrdHdg").text(day);
-        $("#d0" + cardIdx + "Min").text(forecast[i].min);
-        $("#d0" + cardIdx + "Max").text(forecast[i].max);
-        $("#d0" + cardIdx + "Wind").text(forecast[i].windSpeed);
-        $("#d0" + cardIdx + "Hum").text(forecast[i].humidity);   
-        cardIdx++;       
-    };
-    $("#weatherBox").show();
+  // Render a new li for each history item
+  historyLS.forEach((item,index) => { 
+    let btnNbr = index + 1;
+    // create li as a button
+    // let liEl = `<li class="nav-item"><button id="btn${btnNbr}" type="button" class="btn btn-secondary btn-lg btn-block">${item.location}</button></li>`;
+    let liEl = `<li class="nav-item"><a id="btn${btnNbr}"  class="nav-link btn btn-light btn-lg btn-block border" href="#" role="button">${item.location}</a></li>`;
+    // append to list element  
+    $("#historyList").append(liEl);
+    // add data atribute and text
+    let btnId = "#btn" + btnNbr;
+    $(btnId).attr("data-index", index);
+    if (index === 0) {
+      // $(btnId).addClass("active");
+      const spanEl = "<span class=\"sr-only\">(current)</span>";
+      $(btnId).append(spanEl);
+    }
+  });
 };
 
-async function getWeatherAPIdata(longitude,latitude) {
+
+// find the min and max temps, max windspeed
+function findMinMax (dayInfo,i,forecastData) {
+  // console.log(" >>>>> inside findMinMax ", dayInfo, i, weatherData)
+// ${Math.round(forecastData.list[i].main.temp_min)}
+  let min = Math.round(forecastData.list[i].main.temp_min); 
+  let max = Math.round(forecastData.list[i].main.temp_max);
+  let humidity = forecastData.list[i].main.humidity;
+  let wind = Math.round(forecastData.list[i].wind.speed);
+
+  if (dayInfo.min > min) {dayInfo.min = min};
+  if (dayInfo.max < max) {dayInfo.max = max};
+  if (dayInfo.wind < wind) {dayInfo.wind = wind};
+  if (dayInfo.humidity < humidity) {dayInfo.humidity = humidity};
+};
+
+
+function initForecast(dayInfo,i,forecastData){
+// console.log(" >>>>> inside initForecast ", dayInfo, i, forecastData);
+
+  //  initialize day information
+  dayInfo.dayIdx++;
+  dayInfo.yymmdd = dayjs(forecastData.list[i].dt_txt).format("YYYYMMDD"); 
+  dayDate = dayInfo.yymmdd;
+  dayInfo.min = Math.round(forecastData.list[i].main.temp_min); 
+  dayInfo.max = Math.round(forecastData.list[i].main.temp_max);
+  dayInfo.humidity = forecastData.list[i].main.humidity;
+  dayInfo.wind = Math.round(forecastData.list[i].wind.speed);
+  dayInfo.icon = forecastData.list[i].weather[0].icon;
+  dayInfo.desc = forecastData.list[i].weather[0].description;    
+};
+
+function gatherForecast(forecastData){
+// console.log(" >>>>> inside gatherForecast ", location, weatherData);
+  let dayInfo = {
+    dayIdx: 0,
+    yymmdd: null,
+    min: 0,
+    max: 0,
+    desc: "",
+    windSpeed: 0,
+    humidity: 0,
+    icon: null };
+  // let dayDate = null;
+   
+  for(let i=0; i<forecastData.list.length;i++){
+    if (i === 0) {
+      dayInfo.dayIdx = 0;
+      initForecast(dayInfo,i,forecastData);
+      dayDate = dayInfo.yymmdd;
+    } else {
+      let dayDate = dayjs(forecastData.list[i].dt_txt).format("YYYYMMDD");    
+      if (dayInfo.yymmdd === dayDate) {
+        findMinMax(dayInfo,i,forecastData);
+      } else {    
+        displayCards(dayInfo);
+        initForecast(dayInfo,i,forecastData);
+      };  
+    };
+  };  // end for loop
+  // display last card?
+  if (dayInfo.dayIdx === 5) {
+    displayCards(dayInfo);
+  };
+};
+
+function displayCards(dayInfo){
+  // console.log(" >>> inside displayCards");
+  // console.log("dayInfo=>", dayInfo);
+  const iconUrl = "https://openweathermap.org/img/w/%ICON%.png";
+  let imageAttr = {
+    src: iconUrl.replace("%ICON%", dayInfo.icon),
+    alt: "An icon for the weather conditions"
+  };
+  // cssUrl = iconUrl.replace("%ICON%", forecast[i].icon);
+  // console.log("css URL=>", cssUrl);
+  // $("#day0" + cardIdx + "Card").css( {"background-image" : cssUrl } );
+  let date = dayjs(dayInfo.yymmdd).format("ddd, MM/DD");
+  $("#d0" + dayInfo.dayIdx + "CrdHdg").text(date)
+  $("#d0" + dayInfo.dayIdx + "Icon").attr(imageAttr);
+  // $("#d0" + cardIdx + "CrdHdg img").attr(imageAttr);
+  $("#d0" + dayInfo.dayIdx + "Desc").text(dayInfo.desc);
+  $("#d0" + dayInfo.dayIdx + "Min").text(dayInfo.min);
+  $("#d0" + dayInfo.dayIdx + "Max").text(dayInfo.max);
+  $("#d0" + dayInfo.dayIdx + "Wind").text(dayInfo.wind);
+  $("#d0" + dayInfo.dayIdx + "Hum").text(dayInfo.humidity);     
+
+  $("#forecastBox").show();
+};
+
+function displayCurr(location,weatherData){
+// console.log(" >>> inside displayCurr", location, weatherData );
+
+  const iconUrl = "https://openweathermap.org/img/w/%ICON%.png";
+  let imageAttr = {
+    src: iconUrl.replace("%ICON%", weatherData.weather[0].icon),
+    alt: "An icon for the weather conditions"
+  };
+  $("#currIcon").attr(imageAttr);
+  $("#currlocation").text(location);
+  // console.log("weatherData.dt", weatherData.dt, dayjs(weatherData.dt).format("ddd, MM/DD/YYYY"))
+  // let dateTime = " " + dayjs(weatherData.dt).format("ddd, MM/DD/YYYY") + " at " + dayjs(weatherData.dt).format("h:mm A")
+  // $("#currDay").text(dateTime);
+  $("#currDesc").text(weatherData.weather[0].description);
+  $("#currTemp").text(Math.round(weatherData.main.temp));
+  $("#currWind").text(weatherData.wind.speed);
+  $("#currHumidity").text(weatherData.main.humidity);
+  $("#weatherBox").show();
+};
+
+async function getWeatherAPIdata(location,latitude,longitude) {
 // console.log(" >>>>>>  inside getWeatherAPIdata  >>>>>>>>>>>>>>>");
-weatherApiUrl = "https://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longitude + "&appid=" + openKey + "&mode={json}&units=imperial&cnt=40";
+const weatherApiUrl = "https://api.openweathermap.org/data/2.5/weather?lat=%LATITUDE%&lon=%LONGITUDE%&appid=%OPENKEY%&mode={json}&units=imperial&cnt=40".replace("%LATITUDE%",latitude).replace("%LONGITUDE%",longitude).replace("%OPENKEY%",openKey);
+const forecastApiUrl = "https://api.openweathermap.org/data/2.5/forecast?lat=%LATITUDE%&lon=%LONGITUDE%&appid=%OPENKEY%&mode={json}&units=imperial&cnt=40".replace("%LATITUDE%",latitude).replace("%LONGITUDE%",longitude).replace("%OPENKEY%",openKey);
 // console.log(weatherApiUrl);
-    const response = await fetch(weatherApiUrl);
-    const weatherData = await response.json();
-    // console.log(">>weatherData<<", weatherData);
-    gatherForecast(weatherData);
-    displayWeather();
-    saveLocalStorage(); 
+  const response1 = await fetch(weatherApiUrl);
+  const weatherData = await response1.json();
+  displayCurr(location,weatherData);
+
+  const response2 = await fetch(forecastApiUrl);
+  const forecastData = await response2.json();
+  // console.log(">>weatherData<<", weatherData);
+  // displayWeather(location);
+  gatherForecast(forecastData);
+  saveLocalStorage(location,latitude,longitude); 
 };
 
 async function getGeoAPIdata(geoApiUrl) {
 // console.log(" >>>>>>  inside getGeoAPIdata  >>>>>>>>>>>>>>>");
     const response = await fetch(geoApiUrl);  // first promise
-    const geoData = await response.json();      // second promise
+    const geoData = await response.json();   // second promise
     // console.log(">>geoApiUrl<<", geoApiUrl);
     // console.log(">>geoData<<", geoData);
 
-    storeData.location = geoData.results[0].formatted_address;
-    storeData.longitude = geoData.results[0].geometry.location.lng.toFixed(6);
-    storeData.latitude = geoData.results[0].geometry.location.lat.toFixed(6);
-    // console.log(" ", storeData);
-    
+    let location = geoData.results[0].formatted_address;
+    let longitude = geoData.results[0].geometry.location.lng.toFixed(6);
+    let latitude = geoData.results[0].geometry.location.lat.toFixed(6);
+    locationFromLS = false;
     //  >>>>>>>>>>>>>>>>> Open Weather API Call 
-    getWeatherAPIdata(storeData.longitude,storeData.latitude)
-    .then(response => {
-        console.log('yay from getGeoAPIdata');
-    })
+    getWeatherAPIdata(location,latitude,longitude)
     .catch(error => {
-        console.log('error!');
+        console.log('catch error location getWeatherAPIdata function inside getGeoAPIdata async function');
         console.error(error);
     });
 };
@@ -474,40 +283,36 @@ async function getGeoAPIdata(geoApiUrl) {
 function setSearchCriteria() {
 // console.log(" >>>>>>  inside setSearchCriteria >>>>>>>>>>>>>>>");
     // use input data to call geo Location API
-    storeData.location = $("#location").val();
-    //  enter location into Geo location api url
-    var geoLocation = storeData.location.replace(", ",",+").replace(" ","%20");
+  let geolocation = $("#location").val().replace(", ",",+").replace(" ","%20");
 
-    var geoApiUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + geoLocation + "&key=" + geoKey;
+  const geoApiUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=%GEOLOCATION%&key=%GEOKEY%".replace("%GEOLOCATION%",geolocation).replace("%GEOKEY%",geoKey);
 
-    //  >>>>>>>>>>>>>>>>> Google geo API Call 
-    getGeoAPIdata(geoApiUrl)
-    .then(response => {
-        console.log('geo okay');    
-    })
-    .catch(error => {
-        console.log('error geo!');
-        console.error(error);
-    });
+  //  >>>>>>>>>>>>>>>>> Google geo API Call 
+  getGeoAPIdata(geoApiUrl)
+  .catch(error => {
+    console.log('catch error location getGeoAPIdata function');
+    console.error(error);
+  });
 };
 
 function setHistoryCriteria(histBtn) {
 // console.log(" >>>>>>  inside setHistoryCriteria >>>>>>>>>>>>>>>");
-var index = $("#" + histBtn).data("index")
-storeData.location = historyLS[index].location;
-storeData.longitude = historyLS[index].longitude;
-storeData.latitude = historyLS[index].latitude;
-// console.log(" ", storeData);
+// console.log("histBtn>", histBtn);
+  //  retrieve the index of the requested location in the localStorage Array
+  let btnId = "#" + histBtn;
+  let index = $(btnId).data("index");
+  // use local variables
+  let location = historyLS[index].location;
+  let longitude = historyLS[index].longitude;
+  let latitude = historyLS[index].latitude;
+  locationFromLS = true;
 
-//  >>>>>>>>>>>>>>>>> Open Weather API Call 
-getWeatherAPIdata(storeData.longitude,storeData.latitude)
-.then(response => {
-    console.log('yay from getGeoAPIdata');
-})
-.catch(error => {
-    console.log('error!');
+  //  >>>>>>>>>>>>>>>>> Open Weather API Call 
+  getWeatherAPIdata(location,latitude,longitude)
+  .catch(error => {
+    console.log('catch error location getWeatherAPIdata function inside setHistoryCriteria function');
     console.error(error);
-});
+  });
 };
 
 
@@ -519,31 +324,24 @@ $(document).ready(function() {
 });
 
 // wait for user Input
-$("#searchBox").on("click", function (event) {
+$("#submitBtn").on("click", function (event) {
 // console.log(" >>>>>>>>>click event happened >>>>>>>>>>>>>");
-    event.preventDefault();
-    // console.log ("event=>", event);
+  event.preventDefault();
+  // console.log ("event=>", event);
+  // console.log ("event target localName=>", event.target.localName);
+  // console.log ("event target id=>", event.target.id);
+  // console.log("entering Submit Button");
+  setSearchCriteria();  
+});
 
-    if (event.target !== event.currentTarget) {
-    // console.log ("event target localName=>", event.target.localName);
-        // console.log ("event target id=>", event.target.id);
-        if (event.target.localName === "button") {
-
-            if (event.target.id == "submitBtn") 
-            {
-                // console.log("entering Submit Button");
-                locationFromLS = false;
-                setSearchCriteria();  
-            } else {
-                // console.log("entering History Buttons");
-                //  use history button to get geo Location data
-                locationFromLS = true;
-                setHistoryCriteria(event.target.id);  
-            };
-        
-        };
-
-    };
-// stop bubbling
-// event.stopPropagation();
+// wait for user Input
+$("#historyList").on("click", function (event) {
+// console.log(" >>>>>>>>>click event happened >>>>>>>>>>>>>");
+  event.preventDefault();
+  // console.log ("event=>", event);
+  // console.log ("event target localName=>", event.target.localName);
+  // console.log ("event target id=>", event.target.id);
+  // console.log("entering History Buttons");
+  //  pass the history button id pressed
+  setHistoryCriteria(event.target.id);  
 });
